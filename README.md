@@ -43,4 +43,3 @@ e.g. Label and Button can share a theme variation. shared properties like font_c
 
 ### Troubleshooting
 - if you're changing variables and they're not updating in your scene, make sure the active theme in the ThemeEditor is the same as the Theme applied to your scene.
-- if you're trying to add a texture variable but it's not working, its because i haven't implemented textures yet
