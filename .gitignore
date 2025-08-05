@@ -1,0 +1,6 @@
+addons/
+!addons/ThemeEditor*
+.godot/
+project.godot
+preset_manager.png.import
+theme_editor.png.import	

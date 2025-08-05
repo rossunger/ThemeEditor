@@ -148,7 +148,21 @@ func add_font_preset_ui(key):
 	
 func add_texture_preset_ui(key):
 	if key == "default": return
-	pass
+	var node = preload("texture_preset_editor.tscn").instantiate()	
+	node.preset_name = key
+	node.initial_texture_path = presets.textures[key]			
+	node.texture_changed.connect(func(preset, path):
+		presets.textures[preset] = path
+		presets_changed.emit()
+	)
+	node.texture_duplicated.connect(func(new_name, old_name):
+		presets.textures[new_name] = presets.textures[old_name].duplicate(true)
+		add_texture_preset_ui(new_name)
+	)
+	node.rename_requested.connect(rename_preset.bind(presets.textures, node))	
+	node.remove_requested.connect(remove_preset.bind(presets.textures, node))
+	
+	%textures_preset_list.add_child(node)		
 
 func rename_preset(new_name, dictionary_parent,node):
 	if " " in new_name or new_name in dictionary_parent.keys(): 			
@@ -204,7 +218,7 @@ func clear_preset_ui():
 		%font_preset_list.remove_child(child)
 		child.queue_free()
 	for child in %textures_preset_list.get_children():
-		%texture_preset_list.remove_child(child)
+		%textures_preset_list.remove_child(child)
 		child.queue_free()	
 		
 func load_presets(_theme_path = null):

@@ -7,8 +7,8 @@ signal theme_loaded
 @onready var details_tree:Tree = %details_tree
 
 var control_list = []
-var fav_controls_list = "PanelContainer,Label,Button,Panel,CheckBox,CheckButton,TextureButton,TextureRect,ColorRect,NinePatchRect,HSeparator,VSeparator,ItemList,LineEdit,Tree,HSlider,VSlider,SpinBox,OptionButton,HSplitContainer,VSplitContainer,".split(',')
-var container_list = "HBoxContainer,VBoxContainer,ScrollContainer,HFlowContainer,VFlowContainer,MarginContainer,GridContainer, Container,AspectRatioContainer,TabContainer,BoxContainer,CenterContainer,FlowContainer,SubViewportContainer,SplitContainer".split(',')
+var fav_controls_list = "PanelContainer,Label,Button,Panel,CheckBox,CheckButton,TextureRect,ColorRect,NinePatchRect,HSeparator,VSeparator,ItemList,LineEdit,Tree,HSlider,VSlider,SpinBox,OptionButton,HSplitContainer,VSplitContainer".split(',')
+var container_list = "HBoxContainer,VBoxContainer,ScrollContainer,HFlowContainer,VFlowContainer,MarginContainer,GridContainer,Container,AspectRatioContainer,TabContainer,BoxContainer,CenterContainer,FlowContainer,SubViewportContainer,SplitContainer".split(',')
 var other_controls_list = "Range,ScrollBar,HScrollBar,VScrollBar,Slider,LinkButton,ReferenceRect,TabBar,Separator,HSeparator,VSeparator,ProgressBar,TextureProgressBar,VideoStreamPlayer,TextEdit,CodeEdit,MenuBar,MenuButton,ColorPicker,ColorPickerButton,RichTextLabel,GraphElement,GraphNode,GraphFrame,GraphEdit".split(',')
 
 ##TREE BUTTON ICONS
@@ -18,8 +18,8 @@ var edit_icon = preload("icon_edit.svg")
 
 var current_theme:Theme
 ##DEFAULTS
-var default_theme_path = "res://addons/ThemeEditor-main/default_theme.theme"
-var default_props = JSON.parse_string( FileAccess.get_file_as_string("res://addons/ThemeEditor-main/base_type_properties.json"))
+var default_theme_path = "res://addons/ThemeEditor/default_theme.theme"
+var default_props = JSON.parse_string( FileAccess.get_file_as_string("res://addons/ThemeEditor/base_type_properties.json"))
 var example_nodes = {}
 
 var styleboxes = {}
@@ -126,8 +126,7 @@ func init_tree_signals():
 	
 	class_list_tree.item_activated.connect(	class_list_tree.edit_selected.bind(true))
 	class_list_tree.item_selected.connect( update_class_details )
-	class_list_tree.nothing_selected.connect( update_class_details )
-	
+	class_list_tree.nothing_selected.connect( update_class_details )	
 	details_tree.item_edited.connect(detail_edited)
 	
 func init_examples():
@@ -168,24 +167,6 @@ func _ready():
 	%new_theme_button.pressed.connect(show_new_theme_dialog)		
 	%edit_presets_button.pressed.connect(show_preset_manager)	
 	if debug: load_theme(default_theme_path)
-
-#func show_change_theme_dialog(who):
-	#var dialog := FileDialog.new()	
-	#dialog.file_mode = FileDialog.FILE_MODE_OPEN_FILE
-	#dialog.add_filter("*.theme.json", "theme")
-	#dialog.title = "Select Theme"
-	#dialog.dialog_hide_on_ok = false
-#
-	#dialog.file_selected.connect(func(path):				
-		#who.set_meta("theme_path", path.trim_suffix(".json") )
-		#who.tooltip_text = path.get_file().trim_suffix(".theme.json")
-		#dialog.queue_free()
-		#who.set_pressed_no_signal(true)
-		#who.release_focus()
-		#load_theme(path.get_basename())
-	#)
-	#add_child(dialog)
-	#dialog.popup_centered()
 
 func show_new_theme_dialog():
 	var dialog := FileDialog.new()	
@@ -293,7 +274,12 @@ func detail_edited():
 			else:		
 				item.set_icon(0,get_color_as_image(presets.colors[ list[i] ]))			
 		elif "stylebox_" in prop: list = presets.styleboxes.keys()
-		elif "texture_" in prop: list = presets.textures.keys()
+		elif "texture_" in prop: 
+			list = presets.textures.keys()
+			if list[i] == "default":
+				item.set_icon(0, null)
+			else:		
+				item.set_icon(0,load(presets.textures[list[i]]))			
 		elif prop == "font":list = presets.fonts.keys()
 		else: 
 			list = presets.numbers.keys()			
@@ -301,8 +287,7 @@ func detail_edited():
 				item.set_text(0, prop)
 			else:		
 				item.set_text(0, str(prop, " ", presets.numbers[list[i]] ))
-		presets.classes[type][prop] = list[i]
-		
+		presets.classes[type][prop] = list[i]		
 		apply_presets_to_theme()		
 
 func update_class_details():
@@ -355,32 +340,27 @@ func update_class_details():
 			
 		prop_item.set_text(0, prop)
 		prop_item.set_metadata(0, prop)
-		if "color" in prop:
-			prop_item.set_cell_mode(1,TreeItem.CELL_MODE_RANGE)
-			prop_item.set_text(1, ",".join(presets.colors.keys()).replace("default", " "))
-			prop_item.set_editable(1, true)			
+		prop_item.set_cell_mode(1,TreeItem.CELL_MODE_RANGE)
+		prop_item.set_editable(1, true)
+		if "color" in prop:			
+			prop_item.set_text(1, ",".join(presets.colors.keys()).replace("default", " "))			
 			var value = presets.colors[ preset_name ]			
 			if preset_name == "default":
 				prop_item.set_icon(0, null)
 			else:
 				prop_item.set_icon(0,get_color_as_image(value))				
 			prop_item.set_range(1, presets.colors.keys().find(preset_name.replace(" ", "default")) )
-		elif "stylebox_" in prop:
-			prop_item.set_cell_mode(1,TreeItem.CELL_MODE_RANGE)
-			prop_item.set_text(1, ",".join(presets.styleboxes.keys()).replace("default", " "))
-			prop_item.set_editable(1, true)								
+		elif prop.begins_with("stylebox_"):			
+			prop_item.set_text(1, ",".join(presets.styleboxes.keys()).replace("default", " "))										
 			prop_item.set_range(1, presets.styleboxes.keys().find(preset_name.replace(" ", "default")) )
-		elif prop == "font":			
-			prop_item.set_cell_mode(1,TreeItem.CELL_MODE_RANGE)
-			prop_item.set_text(1, ",".join(presets.fonts.keys()).replace("default", " "))
-			prop_item.set_editable(1, true)								
+		elif prop == "font":						
+			prop_item.set_text(1, ",".join(presets.fonts.keys()).replace("default", " "))			
 			prop_item.set_range(1, presets.fonts.keys().find(preset_name.replace(" ", "default")) )			
-		elif prop.ends_with("icon"):
-			pass
-		else:
-			prop_item.set_cell_mode(1,TreeItem.CELL_MODE_RANGE)
-			prop_item.set_text(1, ",".join(presets.numbers.keys()).replace("default", " ") )
-			prop_item.set_editable(1, true)								
+		elif prop.begins_with("texture_"):			
+			prop_item.set_text(1, ",".join(presets.textures.keys()).replace("default", " ") )										
+			prop_item.set_range(1, presets.textures.keys().find(preset_name.replace(" ", "default")) )				
+		else:			
+			prop_item.set_text(1, ",".join(presets.numbers.keys()).replace("default", " ") )			
 			prop_item.set_range(1, presets.numbers.keys().find(preset_name.replace(" ", "default")) )				
 	if invalid_root.get_child_count() == 0:
 		invalid_root.free()
@@ -520,7 +500,7 @@ func apply_presets_to_theme():
 							current_theme.clear_icon(prop, type)
 					else:
 						var value = presets.textures[ presets.classes[type][prop] ]	
-						current_theme.set_icon(prop, type, value)
+						current_theme.set_icon(prop, type, load(value))
 				else:								
 					if "font_size" in prop:									
 						if presets.classes[type][prop] == "default":
@@ -545,8 +525,7 @@ func apply_presets_to_theme():
 		file.store_string(JSON.stringify(presets))
 		file.close()			
 
-func save_presets_to_file(presets_file_path):	
-	#apply_presets_to_theme()
+func save_presets_to_file(presets_file_path):		
 	var file: = FileAccess.open(presets_file_path,FileAccess.WRITE)
 	file.store_string(JSON.stringify(presets))
 	file.close()	
