@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3 uid="uid://maj356k2n2ff"]
+
+[ext_resource type="PackedScene" uid="uid://cb1a2dmfj7oea" path="res://addons/ThemeEditor/theme_editor.tscn" id="1_k53co"]
+[ext_resource type="PackedScene" uid="uid://cyxk20ccp1ua8" path="res://addons/ThemeEditor/preset_manager.tscn" id="2_l4mo6"]
+
+[node name="CanvasLayer" type="CanvasLayer"]
+layer = 128
+
+[node name="ThemeEditor" parent="." instance=ExtResource("1_k53co")]
+
+[node name="PresetManager" parent="." instance=ExtResource("2_l4mo6")]
+unique_name_in_owner = true
+visible = false

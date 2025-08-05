@@ -1,0 +1,208 @@
+[gd_scene load_steps=3 format=3 uid="uid://cyxk20ccp1ua8"]
+
+[ext_resource type="Script" uid="uid://dkeqmgvxn67ga" path="res://addons/ThemeEditor/preset_manager.gd" id="1_xprii"]
+[ext_resource type="PackedScene" uid="uid://bf8g175yd0o4h" path="res://addons/ThemeEditor/preset_manager_panel.tscn" id="2_no825"]
+
+[node name="PresetManager" type="PanelContainer"]
+offset_right = 1920.0
+offset_bottom = 1080.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("1_xprii")
+
+[node name="ScrollContainer" type="ScrollContainer" parent="."]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="VBoxContainer" type="HFlowContainer" parent="ScrollContainer/MarginContainer"]
+layout_mode = 2
+theme_override_constants/h_separation = 8
+theme_override_constants/v_separation = 8
+
+[node name="ColorsPanel" parent="ScrollContainer/MarginContainer/VBoxContainer" instance=ExtResource("2_no825")]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="ScrollContainer/MarginContainer/VBoxContainer/ColorsPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="color_vbox" type="VBoxContainer" parent="ScrollContainer/MarginContainer/VBoxContainer/ColorsPanel/MarginContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="Label" type="Label" parent="ScrollContainer/MarginContainer/VBoxContainer/ColorsPanel/MarginContainer/color_vbox"]
+layout_mode = 2
+size_flags_vertical = 0
+text = "Colors"
+horizontal_alignment = 1
+
+[node name="color_preset_list" type="VBoxContainer" parent="ScrollContainer/MarginContainer/VBoxContainer/ColorsPanel/MarginContainer/color_vbox"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="ScrollContainer/MarginContainer/VBoxContainer/ColorsPanel/MarginContainer/color_vbox"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="add_color_preset_button" type="Button" parent="ScrollContainer/MarginContainer/VBoxContainer/ColorsPanel/MarginContainer/color_vbox"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 8
+text = "+"
+
+[node name="FontsPanel" parent="ScrollContainer/MarginContainer/VBoxContainer" instance=ExtResource("2_no825")]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="ScrollContainer/MarginContainer/VBoxContainer/FontsPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="font_vbox" type="VBoxContainer" parent="ScrollContainer/MarginContainer/VBoxContainer/FontsPanel/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Label" type="Label" parent="ScrollContainer/MarginContainer/VBoxContainer/FontsPanel/MarginContainer/font_vbox"]
+layout_mode = 2
+size_flags_vertical = 0
+text = "Fonts"
+horizontal_alignment = 1
+
+[node name="font_preset_list" type="VBoxContainer" parent="ScrollContainer/MarginContainer/VBoxContainer/FontsPanel/MarginContainer/font_vbox"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="add_font_preset_button" type="Button" parent="ScrollContainer/MarginContainer/VBoxContainer/FontsPanel/MarginContainer/font_vbox"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 8
+text = "+"
+
+[node name="NumbersPanel" parent="ScrollContainer/MarginContainer/VBoxContainer" instance=ExtResource("2_no825")]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="ScrollContainer/MarginContainer/VBoxContainer/NumbersPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="numbers_vbox" type="VBoxContainer" parent="ScrollContainer/MarginContainer/VBoxContainer/NumbersPanel/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Label" type="Label" parent="ScrollContainer/MarginContainer/VBoxContainer/NumbersPanel/MarginContainer/numbers_vbox"]
+layout_mode = 2
+size_flags_vertical = 0
+text = "Numbers"
+horizontal_alignment = 1
+
+[node name="number_preset_list" type="VBoxContainer" parent="ScrollContainer/MarginContainer/VBoxContainer/NumbersPanel/MarginContainer/numbers_vbox"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="MarginContainer2" type="MarginContainer" parent="ScrollContainer/MarginContainer/VBoxContainer/NumbersPanel/MarginContainer/numbers_vbox"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="add_number_preset_button" type="Button" parent="ScrollContainer/MarginContainer/VBoxContainer/NumbersPanel/MarginContainer/numbers_vbox"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 8
+text = "+"
+
+[node name="StyleboxesPanel" parent="ScrollContainer/MarginContainer/VBoxContainer" instance=ExtResource("2_no825")]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="ScrollContainer/MarginContainer/VBoxContainer/StyleboxesPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="styleboxes_vbox" type="VBoxContainer" parent="ScrollContainer/MarginContainer/VBoxContainer/StyleboxesPanel/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Label" type="Label" parent="ScrollContainer/MarginContainer/VBoxContainer/StyleboxesPanel/MarginContainer/styleboxes_vbox"]
+layout_mode = 2
+size_flags_vertical = 0
+text = "Styleboxes"
+horizontal_alignment = 1
+
+[node name="stylebox_preset_list" type="VBoxContainer" parent="ScrollContainer/MarginContainer/VBoxContainer/StyleboxesPanel/MarginContainer/styleboxes_vbox"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 1
+
+[node name="MarginContainer2" type="MarginContainer" parent="ScrollContainer/MarginContainer/VBoxContainer/StyleboxesPanel/MarginContainer/styleboxes_vbox"]
+visible = false
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="add_stylebox_preset_button" type="Button" parent="ScrollContainer/MarginContainer/VBoxContainer/StyleboxesPanel/MarginContainer/styleboxes_vbox"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 8
+text = "+"
+
+[node name="TexturesPanel" parent="ScrollContainer/MarginContainer/VBoxContainer" instance=ExtResource("2_no825")]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="ScrollContainer/MarginContainer/VBoxContainer/TexturesPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="vbox" type="VBoxContainer" parent="ScrollContainer/MarginContainer/VBoxContainer/TexturesPanel/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Label" type="Label" parent="ScrollContainer/MarginContainer/VBoxContainer/TexturesPanel/MarginContainer/vbox"]
+layout_mode = 2
+size_flags_vertical = 0
+text = "Textures"
+horizontal_alignment = 1
+
+[node name="textures_preset_list" type="VBoxContainer" parent="ScrollContainer/MarginContainer/VBoxContainer/TexturesPanel/MarginContainer/vbox"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="add_textures_preset_button" type="Button" parent="ScrollContainer/MarginContainer/VBoxContainer/TexturesPanel/MarginContainer/vbox"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 8
+text = "+"
+
+[node name="close_button" type="Button" parent="."]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 8
+text = "Close"

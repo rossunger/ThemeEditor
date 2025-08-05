@@ -1,0 +1,110 @@
+[gd_scene load_steps=10 format=3 uid="uid://cb1a2dmfj7oea"]
+
+[ext_resource type="Script" uid="uid://bifah2vpggnhm" path="res://addons/ThemeEditor/theme_editor.gd" id="1_rfxdj"]
+[ext_resource type="Texture2D" uid="uid://do53psudsfxxr" path="res://addons/ThemeEditor/icon_open.svg" id="2_ddoil"]
+[ext_resource type="Texture2D" uid="uid://cwfnrgg5e68jr" path="res://addons/ThemeEditor/icon_add.svg" id="3_mw4ys"]
+[ext_resource type="Texture2D" uid="uid://bqjyj8pe4su7t" path="res://addons/ThemeEditor/icon_settings.svg" id="4_km1hr"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rfxdj"]
+bg_color = Color(0.187176, 0.187176, 0.187176, 1)
+
+[sub_resource type="ButtonGroup" id="ButtonGroup_ddoil"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ddoil"]
+bg_color = Color(0, 0, 0, 0.282)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_m3y7n"]
+bg_color = Color(0.241156, 0.241156, 0.241156, 0.464)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mw4ys"]
+bg_color = Color(0.0846899, 0.0846899, 0.0846899, 0.464)
+
+[node name="ThemeEditor" type="PanelContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_rfxdj")
+script = ExtResource("1_rfxdj")
+
+[node name="HSplitContainer" type="HSplitContainer" parent="."]
+layout_mode = 2
+split_offset = 380
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HSplitContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="HSplitContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="ScrollContainer" type="ScrollContainer" parent="HSplitContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+follow_focus = true
+vertical_scroll_mode = 3
+
+[node name="open_themes_hbox" type="HBoxContainer" parent="HSplitContainer/VBoxContainer/HBoxContainer/ScrollContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+metadata/button_group = SubResource("ButtonGroup_ddoil")
+
+[node name="add_theme_button" type="Button" parent="HSplitContainer/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 8
+icon = ExtResource("2_ddoil")
+
+[node name="new_theme_button" type="Button" parent="HSplitContainer/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 8
+icon = ExtResource("3_mw4ys")
+
+[node name="edit_presets_button" type="Button" parent="HSplitContainer/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_stretch_ratio = 0.49
+theme_override_styles/focus = SubResource("StyleBoxFlat_ddoil")
+theme_override_styles/hover = SubResource("StyleBoxFlat_m3y7n")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_mw4ys")
+theme_override_styles/normal = SubResource("StyleBoxFlat_ddoil")
+icon = ExtResource("4_km1hr")
+icon_alignment = 1
+
+[node name="class_list_tree" type="Tree" parent="HSplitContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+columns = 2
+hide_folding = true
+hide_root = true
+select_mode = 1
+
+[node name="add_class_button" type="Button" parent="HSplitContainer/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(32, 0)
+layout_mode = 2
+text = "+"
+
+[node name="VBoxContainer2" type="HSplitContainer" parent="HSplitContainer"]
+layout_mode = 2
+split_offset = 420
+
+[node name="details_tree" type="Tree" parent="HSplitContainer/VBoxContainer2"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+columns = 2
+hide_root = true
+
+[node name="ScrollContainer" type="ScrollContainer" parent="HSplitContainer/VBoxContainer2"]
+layout_mode = 2
+
+[node name="example" type="HFlowContainer" parent="HSplitContainer/VBoxContainer2/ScrollContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3

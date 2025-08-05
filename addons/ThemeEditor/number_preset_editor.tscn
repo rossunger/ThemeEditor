@@ -1,0 +1,30 @@
+[gd_scene load_steps=3 format=3 uid="uid://dcwklkbq0thsn"]
+
+[ext_resource type="Script" uid="uid://cuav15e8xkxwx" path="res://addons/ThemeEditor/number_preset_editor.gd" id="1_0hwma"]
+[ext_resource type="Texture2D" uid="uid://dl72oslti4imj" path="res://addons/ThemeEditor/icon_close.svg" id="2_6dfse"]
+
+[node name="NumberPresetEditor" type="HBoxContainer"]
+offset_right = 68.0
+offset_bottom = 31.0
+size_flags_horizontal = 3
+script = ExtResource("1_0hwma")
+metadata/preset_name = ""
+
+[node name="preset_name" type="LineEdit" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+expand_to_text_length = true
+
+[node name="value" type="LineEdit" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "0"
+text = "0"
+expand_to_text_length = true
+metadata/value = 0
+
+[node name="remove_preset_button" type="Button" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+icon = ExtResource("2_6dfse")
