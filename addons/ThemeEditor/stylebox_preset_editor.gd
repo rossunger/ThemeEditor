@@ -16,7 +16,9 @@ var flat_props = {
 	"margins": ["left", "top","right", "bottom"], 
 	"shadow": ["color", "size", "offset_x", "offset_y"]
 }
-var texture_props = []
+var texture_props = {
+	
+}
 var presets
 
 func _ready():	
@@ -79,3 +81,6 @@ func get_color_as_image(color:Color):
 	var img = Image.create(16,16,false,Image.FORMAT_RGBA8)
 	img.fill(color)	
 	return ImageTexture.create_from_image( img )
+
+func reset_name():
+	%preset_name_input.text = preset_name

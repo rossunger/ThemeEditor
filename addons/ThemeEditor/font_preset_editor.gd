@@ -41,3 +41,6 @@ func _ready():
 		
 func duplicate_font_preset():		
 	font_duplicated.emit(preset_name + "_copy", preset_name)
+
+func reset_name():
+	%preset_name.text = preset_name

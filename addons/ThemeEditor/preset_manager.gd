@@ -92,29 +92,31 @@ func add_color_preset():
 func add_number_preset_ui(key):
 	if key == "default": return
 	var value = presets.numbers[key]
-	var node = preload("number_preset_editor.tscn").instantiate()
+	var node = preload("number_preset_editor.tscn").instantiate()	
 	node.preset_name = key
 	node.preset_value = value if value else 0		
+	%number_preset_list.add_child(node)
 	node.value_changed.connect(func(new_value):
 		presets.numbers[node.preset_name] = new_value
-		presets_changed.emit()
+		presets_changed.emit("numbers", node.preset_name)
 	)
 	node.rename_requested.connect(rename_preset.bind(presets.numbers, node))	
 	node.remove_requested.connect(remove_preset.bind(presets.numbers, node))
-	%number_preset_list.add_child(node)
+	
 	
 func add_color_preset_ui(key):	
 	if key == "default": return	
 	var node = preload("color_preset_picker.tscn").instantiate()
 	node.preset_name = key
 	node.preset_color = presets.colors[key]
+	%color_preset_list.add_child(node)
 	node.color_changed.connect(func(new_color):
 		presets.colors[node.preset_name] = new_color
-		presets_changed.emit()
+		presets_changed.emit("colors", node.preset_name)
 	)
 	node.rename_requested.connect(rename_preset.bind(presets.colors, node))	
 	node.remove_requested.connect(remove_preset.bind(presets.colors, node))
-	%color_preset_list.add_child(node)
+	
 		
 func add_stylebox_preset_ui(key):
 	if key == "default": return
@@ -122,20 +124,24 @@ func add_stylebox_preset_ui(key):
 	node.presets = presets
 	node.preset_name = key
 	node.is_texture = false	
+	%stylebox_preset_list.add_child(node)	
 	node.stylebox_duplicated.connect(add_stylebox_preset_ui)
-	node.stylebox_changed.connect(func(): presets_changed.emit())
+	node.stylebox_changed.connect(func(): 
+		presets_changed.emit("styleboxes", node.preset_name)
+	)
 	node.rename_requested.connect(rename_preset.bind(presets.styleboxes, node))	
 	node.remove_requested.connect(remove_preset.bind(presets.styleboxes, node))
-	%stylebox_preset_list.add_child(node)	
+	
 	
 func add_font_preset_ui(key):
 	if key == "default": return
 	var node = preload("font_preset_editor.tscn").instantiate()	
 	node.preset_name = key
 	node.initial_font_path = presets.fonts[key]			
+	%font_preset_list.add_child(node)	
 	node.font_changed.connect(func(preset, path):
 		presets.fonts[preset] = path
-		presets_changed.emit()
+		presets_changed.emit("fonts", node.preset_name)
 	)
 	node.font_duplicated.connect(func(new_name, old_name):
 		presets.fonts[new_name] = presets.fonts[old_name].duplicate(true)
@@ -144,16 +150,17 @@ func add_font_preset_ui(key):
 	node.rename_requested.connect(rename_preset.bind(presets.fonts, node))	
 	node.remove_requested.connect(remove_preset.bind(presets.fonts, node))
 	
-	%font_preset_list.add_child(node)	
+	
 	
 func add_texture_preset_ui(key):
 	if key == "default": return
 	var node = preload("texture_preset_editor.tscn").instantiate()	
 	node.preset_name = key
 	node.initial_texture_path = presets.textures[key]			
+	%textures_preset_list.add_child(node)		
 	node.texture_changed.connect(func(preset, path):
 		presets.textures[preset] = path
-		presets_changed.emit()
+		presets_changed.emit("textures", node.preset_name)
 	)
 	node.texture_duplicated.connect(func(new_name, old_name):
 		presets.textures[new_name] = presets.textures[old_name].duplicate(true)
@@ -162,8 +169,6 @@ func add_texture_preset_ui(key):
 	node.rename_requested.connect(rename_preset.bind(presets.textures, node))	
 	node.remove_requested.connect(remove_preset.bind(presets.textures, node))
 	
-	%textures_preset_list.add_child(node)		
-
 func rename_preset(new_name, dictionary_parent,node):
 	if " " in new_name or new_name in dictionary_parent.keys(): 			
 		node.reset_name()
@@ -222,7 +227,7 @@ func clear_preset_ui():
 		child.queue_free()	
 		
 func load_presets(_theme_path = null):
-	clear_preset_ui()
+	clear_preset_ui()		
 	var keys = presets.colors.keys()
 	keys.sort()
 	for key in keys:			
@@ -236,7 +241,7 @@ func load_presets(_theme_path = null):
 		add_stylebox_preset_ui(key)
 	keys = presets.fonts.keys()
 	for key in keys:			
-		add_font_preset_ui(key)
+		add_font_preset_ui(key)	
 	keys = presets.textures.keys()
 	for key in keys:			
 		add_texture_preset_ui(key)

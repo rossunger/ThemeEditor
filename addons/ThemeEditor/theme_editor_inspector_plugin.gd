@@ -5,6 +5,7 @@ var target:Control
 var possible_types = []
 var presets
 var current_theme_path = ""
+
 func theme_loaded(path):
 	current_theme_path = path
 	
@@ -35,11 +36,11 @@ func _parse_begin(object):
 	var i = 1
 	for c in possible_types:
 		option.add_item(c, i)
-		if target.theme_type_variation == c:
+		if target.theme_type_variation == c + "_"+ target.get_class():
 			option.select(i)
 		i+=1	
 	option.item_selected.connect(func(idx):
-		target.theme_type_variation = option.get_item_text(idx)
+		target.theme_type_variation = option.get_item_text(idx) +"_"+ target.get_class()
 	)	
 	var hbox = HBoxContainer.new()
 	hbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL

@@ -11,7 +11,7 @@ var preset_color:Color
 func _ready():	
 	%label.text = preset_name	
 	%picker.color = preset_color
-	%picker.color_changed.connect(func(color):
+	%picker.color_changed.connect(func(color):		
 		color_changed.emit(color)
 	)
 	%label.text_submitted.connect(func(text):

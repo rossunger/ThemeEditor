@@ -9,8 +9,8 @@ func _enter_tree():
 	inspector_plugin = preload("theme_editor_inspector_plugin.gd").new()
 	theme_editor = preload("theme_editor.tscn").instantiate()
 	preset_editor = preload("preset_manager.tscn").instantiate()
-	preset_editor.presets = theme_editor.presets
-	preset_editor.presets_changed.connect(theme_editor.apply_presets_to_theme)
+	preset_editor.presets = theme_editor.presets		
+	preset_editor.presets_changed.connect(theme_editor.apply_variable_to_theme)
 	theme_editor.preset_manager = preset_editor
 	inspector_plugin.presets = theme_editor.presets
 	theme_editor.theme_loaded.connect(inspector_plugin.theme_loaded)	

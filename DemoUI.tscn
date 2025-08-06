@@ -1,0 +1,212 @@
+[gd_scene load_steps=2 format=3 uid="uid://coudk3me6xvwh"]
+
+[ext_resource type="Theme" uid="uid://oqf4h5mwq8uo" path="res://addons/ThemeEditor/default_theme.theme" id="1_lu1mw"]
+
+[node name="DemoUi" type="PanelContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_lu1mw")
+theme_type_variation = &"panel_main"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="Panel2" type="PanelContainer" parent="VBoxContainer"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+theme_type_variation = &"container_tall_PanelContainer"
+
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/Panel2"]
+layout_mode = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/Panel2/MarginContainer"]
+layout_mode = 2
+theme_type_variation = &"_HBoxContainer"
+alignment = 1
+
+[node name="Button" type="Button" parent="VBoxContainer/Panel2/MarginContainer/HBoxContainer"]
+layout_mode = 2
+theme_type_variation = &"button_solid_Button"
+text = "Home"
+
+[node name="Button2" type="Button" parent="VBoxContainer/Panel2/MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 8
+theme_type_variation = &"button_solid_Button"
+text = "About"
+
+[node name="Button3" type="Button" parent="VBoxContainer/Panel2/MarginContainer/HBoxContainer"]
+layout_mode = 2
+theme_type_variation = &"button_solid_Button"
+text = "Pricing"
+
+[node name="Button4" type="Button" parent="VBoxContainer/Panel2/MarginContainer/HBoxContainer"]
+layout_mode = 2
+theme_type_variation = &"button_solid_Button"
+text = "Contact"
+
+[node name="CenterContainer" type="CenterContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/CenterContainer"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"box_m"
+
+[node name="Label" type="Label" parent="VBoxContainer/CenterContainer/VBoxContainer"]
+layout_mode = 2
+theme_type_variation = &"h1_Label"
+text = "Welcome to the game"
+horizontal_alignment = 1
+
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/CenterContainer/VBoxContainer"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"margin_y_MarginContainer"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/CenterContainer/VBoxContainer"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+size_flags_horizontal = 6
+theme_type_variation = &"box_m"
+
+[node name="Button" type="Button" parent="VBoxContainer/CenterContainer/VBoxContainer/VBoxContainer"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+theme_type_variation = &"button_outline_Button"
+text = "Play"
+
+[node name="Button2" type="Button" parent="VBoxContainer/CenterContainer/VBoxContainer/VBoxContainer"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+theme_type_variation = &"button_menu"
+text = "Options"
+
+[node name="Button3" type="Button" parent="VBoxContainer/CenterContainer/VBoxContainer/VBoxContainer"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+theme_type_variation = &"button_menu"
+text = "Exit"
+
+[node name="MarginContainer2" type="MarginContainer" parent="VBoxContainer/CenterContainer/VBoxContainer"]
+layout_mode = 2
+theme_type_variation = &"margin_y_MarginContainer"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/CenterContainer/VBoxContainer"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"box_m"
+alignment = 1
+
+[node name="Button4" type="Button" parent="VBoxContainer/CenterContainer/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+theme_type_variation = &"button_menu"
+text = "Play"
+
+[node name="Button5" type="Button" parent="VBoxContainer/CenterContainer/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+theme_type_variation = &"button_menu"
+text = "Options"
+
+[node name="Button6" type="Button" parent="VBoxContainer/CenterContainer/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+theme_type_variation = &"button_menu"
+text = "Exit"
+
+[node name="MarginContainer3" type="MarginContainer" parent="VBoxContainer/CenterContainer/VBoxContainer"]
+layout_mode = 2
+theme_type_variation = &"margin_y_MarginContainer"
+
+[node name="MarginContainer4" type="MarginContainer" parent="VBoxContainer/CenterContainer/VBoxContainer"]
+layout_mode = 2
+theme_type_variation = &"margin_y_MarginContainer"
+
+[node name="HFlowContainer" type="HFlowContainer" parent="VBoxContainer/CenterContainer/VBoxContainer"]
+custom_minimum_size = Vector2(450, 0)
+layout_mode = 2
+theme_override_constants/h_separation = 20
+theme_override_constants/v_separation = 20
+alignment = 1
+last_wrap_alignment = 2
+
+[node name="Panel" type="Panel" parent="VBoxContainer/CenterContainer/VBoxContainer/HFlowContainer"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+theme_type_variation = &"panel_light_bg_class_Panel"
+
+[node name="Label" type="Label" parent="VBoxContainer/CenterContainer/VBoxContainer/HFlowContainer/Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_type_variation = &"p_Label"
+text = "I am light bg with dark text"
+autowrap_mode = 3
+
+[node name="Panel3" type="Panel" parent="VBoxContainer/CenterContainer/VBoxContainer/HFlowContainer"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+theme_type_variation = &"panel_dark_bg_class_Panel"
+
+[node name="Label" type="Label" parent="VBoxContainer/CenterContainer/VBoxContainer/HFlowContainer/Panel3"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_type_variation = &"p_dark_Label"
+text = "I am a dark bg with light text"
+autowrap_mode = 3
+
+[node name="Panel4" type="Panel" parent="VBoxContainer/CenterContainer/VBoxContainer/HFlowContainer"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+theme_type_variation = &"panel_default_class_Panel"
+
+[node name="Panel5" type="Panel" parent="VBoxContainer/CenterContainer/VBoxContainer/HFlowContainer"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+theme_type_variation = &"panel_modal_class_Panel"
+
+[node name="Label" type="Label" parent="VBoxContainer/CenterContainer/VBoxContainer/HFlowContainer/Panel5"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_type_variation = &"p_dark_Label"
+text = "I am a modal"
+autowrap_mode = 3
+
+[node name="Panel6" type="Panel" parent="VBoxContainer/CenterContainer/VBoxContainer/HFlowContainer"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+theme_type_variation = &"panel_card_class_Panel"
+
+[node name="Label" type="Label" parent="VBoxContainer/CenterContainer/VBoxContainer/HFlowContainer/Panel6"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_type_variation = &"p_dark_Label"
+text = "I am a card with drop shadows"
+autowrap_mode = 3
