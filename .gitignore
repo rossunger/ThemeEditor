@@ -1,5 +1,5 @@
-addons/
-!addons/ThemeEditor*
+addons/3d_viewport*
+addons/script*
 .godot/
 project.godot
 preset_manager.png.import

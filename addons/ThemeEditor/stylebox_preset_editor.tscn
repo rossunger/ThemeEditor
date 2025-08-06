@@ -1,6 +1,7 @@
-[gd_scene load_steps=5 format=3 uid="uid://cub3bm7qxs1kn"]
+[gd_scene load_steps=6 format=3 uid="uid://cub3bm7qxs1kn"]
 
 [ext_resource type="Script" uid="uid://bp3xktvfskgki" path="res://addons/ThemeEditor/stylebox_preset_editor.gd" id="1_134xu"]
+[ext_resource type="Theme" uid="uid://oqf4h5mwq8uo" path="res://addons/ThemeEditor/default_theme.theme" id="1_ov3kk"]
 [ext_resource type="Texture2D" uid="uid://cjct6oh8b1nyb" path="res://addons/ThemeEditor/icon_duplicate.svg" id="2_i4lgl"]
 [ext_resource type="Texture2D" uid="uid://dl72oslti4imj" path="res://addons/ThemeEditor/icon_close.svg" id="3_883ou"]
 
@@ -12,6 +13,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme = ExtResource("1_ov3kk")
 theme_override_styles/panel = SubResource("StyleBoxFlat_883ou")
 script = ExtResource("1_134xu")
 
@@ -51,15 +53,6 @@ icon = ExtResource("2_i4lgl")
 unique_name_in_owner = true
 layout_mode = 2
 icon = ExtResource("3_883ou")
-
-[node name="OptionButton" type="OptionButton" parent="MarginContainer/VBoxContainer2"]
-layout_mode = 2
-selected = 0
-item_count = 2
-popup/item_0/text = "Flat"
-popup/item_0/id = 0
-popup/item_1/text = "Texture"
-popup/item_1/id = 1
 
 [node name="Tree" type="Tree" parent="MarginContainer/VBoxContainer2"]
 unique_name_in_owner = true
