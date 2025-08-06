@@ -17,7 +17,8 @@ var flat_props = {
 	"shadow": ["color", "size", "offset_x", "offset_y"]
 }
 var texture_props = {
-	
+	"texture":[ "texture", "modulate", "draw_center", "left", "top","right", "bottom", "tile_x", "tile_y"],
+	"margins": ["left", "top","right", "bottom"], 	
 }
 var presets
 
@@ -27,8 +28,30 @@ func _ready():
 	%preset_name_input.focus_exited.connect(func(): rename_requested.emit(preset_name))
 	%show_preset_details_button.toggled.connect(func(toggle_on):
 		%show_preset_details_button.text = "<" if not toggle_on else "v"
+		%is_texture_button.visible = toggle_on		
 		tree.visible = toggle_on
+		
+	)	
+	%is_texture_button.toggled.connect(func(toggle_on):
+		%is_texture_button.text = "texture stylebox" if toggle_on else "flat stylebox"	
+		if not presets.styleboxes[preset_name].has("is_texture"): print(preset_name)
+		if presets.styleboxes[preset_name].is_texture != toggle_on:
+			presets.styleboxes[preset_name].is_texture = toggle_on
+			is_texture = toggle_on
+			if is_texture:
+				for category in texture_props.keys():
+					for prop in texture_props[category]:
+						if not presets.styleboxes[preset_name].has(category + "_" + prop):
+							presets.styleboxes[preset_name][category + "_" + prop] = "default"
+			else:
+				for category in flat_props.keys():
+					for prop in flat_props[category]:
+						if not presets.styleboxes[preset_name].has(category + "_" + prop):
+							presets.styleboxes[preset_name][category + "_" + prop] = "default"
+				
+			build_tree()
 	)
+	%is_texture_button.button_pressed = is_texture
 	build_tree()
 	tree.item_edited.connect(item_edited)
 	%duplicate_stylebox_button.pressed.connect(duplicate_stylebox)
@@ -68,8 +91,41 @@ func build_tree():
 					var value = presets.styleboxes[preset_name][category+"_"+prop]
 					
 					if presets.colors[value] is Color:
+						item.set_icon(0, get_color_as_image(presets.colors[value]))						
+					item.set_range(1, presets.colors.keys().find(value))					
+				else:					
+					item.set_metadata(1, presets.numbers.keys())				
+					item.set_text(1, ",".join(presets.numbers.keys()))
+					var value = presets.styleboxes[preset_name][category+"_"+prop]
+					item.set_range(1, presets.numbers.keys().find(value))
+	else:
+		for category in texture_props.keys():
+			var cat = root.create_child()
+			cat.set_text(0, category)
+			var i = 0
+			for prop in texture_props[category]:								
+				var item = cat.create_child()
+				item.set_text(0,prop)						
+				item.set_metadata(0, category+"_"+prop)				
+				item.set_editable(1,true)
+				item.set_cell_mode(1, TreeItem.CELL_MODE_RANGE)				
+				if prop == "modulate":									
+					item.set_metadata(1, presets.colors.keys())				
+					item.set_text(1, ",".join(presets.colors.keys()))					
+					var value = presets.styleboxes[preset_name][category+"_"+prop]					
+					if presets.colors[value] is Color:
 						item.set_icon(0, get_color_as_image(presets.colors[value]))
 					item.set_range(1, presets.colors.keys().find(value))
+				elif prop == "texture":
+					item.set_metadata(1, presets.textures.keys())				
+					item.set_text(1, ",".join(presets.textures.keys()))					
+					var value = presets.styleboxes[preset_name][category+"_"+prop]					
+					if FileAccess.file_exists( presets.textures[value]):
+						item.set_icon(0, load(presets.textures[value]))
+						item.set_icon_max_width(0, 32)
+					else:
+						print(value)
+					item.set_range(1, presets.textures.keys().find(value))
 				else:					
 					item.set_metadata(1, presets.numbers.keys())				
 					item.set_text(1, ",".join(presets.numbers.keys()))

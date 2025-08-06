@@ -1,5 +1,6 @@
-[gd_scene load_steps=3 format=3 uid="uid://cyxk20ccp1ua8"]
+[gd_scene load_steps=4 format=3 uid="uid://cyxk20ccp1ua8"]
 
+[ext_resource type="Theme" uid="uid://h62ox0foxljt" path="res://demo_theme.theme" id="1_i25dc"]
 [ext_resource type="Script" uid="uid://dkeqmgvxn67ga" path="res://addons/ThemeEditor/preset_manager.gd" id="1_xprii"]
 [ext_resource type="PackedScene" uid="uid://bf8g175yd0o4h" path="res://addons/ThemeEditor/preset_manager_panel.tscn" id="2_no825"]
 
@@ -10,6 +11,7 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+theme = ExtResource("1_i25dc")
 script = ExtResource("1_xprii")
 
 [node name="ScrollContainer" type="ScrollContainer" parent="."]
@@ -31,6 +33,7 @@ theme_override_constants/v_separation = 8
 
 [node name="ColorsPanel" parent="ScrollContainer/MarginContainer/VBoxContainer" instance=ExtResource("2_no825")]
 layout_mode = 2
+size_flags_horizontal = 3
 
 [node name="MarginContainer" type="MarginContainer" parent="ScrollContainer/MarginContainer/VBoxContainer/ColorsPanel"]
 layout_mode = 2
@@ -67,6 +70,7 @@ text = "+"
 
 [node name="FontsPanel" parent="ScrollContainer/MarginContainer/VBoxContainer" instance=ExtResource("2_no825")]
 layout_mode = 2
+size_flags_horizontal = 3
 
 [node name="MarginContainer" type="MarginContainer" parent="ScrollContainer/MarginContainer/VBoxContainer/FontsPanel"]
 layout_mode = 2
@@ -98,6 +102,7 @@ text = "+"
 
 [node name="NumbersPanel" parent="ScrollContainer/MarginContainer/VBoxContainer" instance=ExtResource("2_no825")]
 layout_mode = 2
+size_flags_horizontal = 3
 
 [node name="MarginContainer" type="MarginContainer" parent="ScrollContainer/MarginContainer/VBoxContainer/NumbersPanel"]
 layout_mode = 2
@@ -132,6 +137,7 @@ text = "+"
 
 [node name="StyleboxesPanel" parent="ScrollContainer/MarginContainer/VBoxContainer" instance=ExtResource("2_no825")]
 layout_mode = 2
+size_flags_horizontal = 3
 
 [node name="MarginContainer" type="MarginContainer" parent="ScrollContainer/MarginContainer/VBoxContainer/StyleboxesPanel"]
 layout_mode = 2
@@ -169,6 +175,7 @@ text = "+"
 
 [node name="TexturesPanel" parent="ScrollContainer/MarginContainer/VBoxContainer" instance=ExtResource("2_no825")]
 layout_mode = 2
+size_flags_horizontal = 3
 
 [node name="MarginContainer" type="MarginContainer" parent="ScrollContainer/MarginContainer/VBoxContainer/TexturesPanel"]
 layout_mode = 2

@@ -197,6 +197,10 @@ func init_presets(presets_file_path):
 			presets.colors[key] = Color(float(color[0]), float(color[1]), float(color[2]), float(color[3])) if color else Color(0,0,0,0)
 		for key in presets.numbers.keys():			
 			presets.numbers[key] = int(presets.numbers[key])
+		for key in presets.styleboxes.keys():		
+			if key == "default": continue
+			if not presets.styleboxes[key].has("is_texture"):
+				presets.styleboxes[key]["is_texture"] = false
 	else:
 		presets = default_presets.duplicate(true)
 		save_presets_to_file(presets_file_path)
@@ -233,7 +237,7 @@ func add_item_to_example(type, base_type):
 func change_theme_gui_input(event, who):
 	if event is InputEventMouseButton and event.pressed:
 		if current_theme and event.button_index == MOUSE_BUTTON_LEFT and who.has_meta("theme_path"):					
-			save_presets_to_file(current_theme.resource_path.get_basename() +".theme.json")
+			save_presets_to_file()
 			switch_theme(who.get_meta("theme_path"))
 		elif event.button_index == MOUSE_BUTTON_RIGHT:
 			if not who.button_pressed:			
@@ -390,6 +394,7 @@ func detail_edited(specific_item:TreeItem = null):
 		presets.classes[type][prop] = list[i]		
 		if not specific_item:
 			apply_prop_to_theme(type, prop)
+			save_presets_to_file()
 		else:
 			var old_preset_name = item.get_metadata(1)	
 			if old_preset_name == list[i]: return
@@ -603,15 +608,18 @@ func apply_variable_to_theme(category, preset_name):
 	for type in presets.classes.keys():
 		for prop in presets.classes[type].keys():
 			if prop == "base_type": continue
+			if prop == "is_texture": continue
 			if presets.classes[type][prop] == preset_name:
 				apply_prop_to_theme(type, prop)	
 				if not details_tree_prop_nodes.has(preset_name): continue
 				for prop_item in details_tree_prop_nodes[preset_name]:
 					detail_edited(prop_item)
+	save_presets_to_file()
 				
 
 func apply_prop_to_theme(type:String, prop:String, extra_node_properties:Dictionary={}):
 	if prop == "base_type":return	
+	if prop == "is_texture": return
 	if prop in extra_node_property_names:					
 		if not extra_node_properties.has(type):extra_node_properties[type] = []
 		if not prop in extra_node_properties[type]: 								
@@ -631,9 +639,13 @@ func apply_prop_to_theme(type:String, prop:String, extra_node_properties:Diction
 				if current_theme.has_stylebox(prop,get_resolved_type(type,base_type)):
 					current_theme.clear_stylebox(prop, get_resolved_type(type,base_type))
 		else:					
-			var stylebox_preset_name = presets.classes[type][prop]
-			if not styleboxes.has(stylebox_preset_name):
-				styleboxes[stylebox_preset_name] = StyleBoxFlat.new()
+			var stylebox_preset_name = presets.classes[type][prop]			
+			if presets.styleboxes[stylebox_preset_name].is_texture:
+				if not styleboxes.has(stylebox_preset_name) or not styleboxes[stylebox_preset_name] is StyleBoxTexture:				
+					styleboxes[stylebox_preset_name] = StyleBoxTexture.new()									
+			else:
+				if not styleboxes.has(stylebox_preset_name) or not styleboxes[stylebox_preset_name] is StyleBoxFlat:								
+					styleboxes[stylebox_preset_name] = StyleBoxFlat.new()									
 			update_stylebox(stylebox_preset_name)															
 			for base_type in presets.classes[type].base_type:										
 				current_theme.set_stylebox(prop.trim_prefix("stylebox_"), get_resolved_type(type,base_type), styleboxes[stylebox_preset_name])
@@ -696,10 +708,7 @@ func apply_all_to_theme():
 			for prop in presets.classes[original_type].keys():			
 				apply_prop_to_theme(original_type, prop, extra_node_properties)				
 	if Engine.is_editor_hint():
-		var presets_file_path = current_theme.resource_path.get_basename() +".theme.json"
-		var file: = FileAccess.open(presets_file_path,FileAccess.WRITE)
-		file.store_string(JSON.stringify(presets))
-		file.close()			
+		save_presets_to_file()			
 	update_extra_node_properties(extra_node_properties)
 
 func update_extra_node_properties(extra_node_properties):
@@ -719,14 +728,15 @@ func update_extra_node_properties(extra_node_properties):
 			elif key == "expand_y":
 				node.size_flags_vertical = node.size_flags_vertical | Control.SIZE_EXPAND if presets.numbers[presets.classes[type][key]] else node.size_flags_vertical & ~Control.SIZE_EXPAND
 
-func save_presets_to_file(presets_file_path):		
-	var file: = FileAccess.open(presets_file_path,FileAccess.WRITE)
-	file.store_string(JSON.stringify(presets))
-	file.close()	
+func save_presets_to_file(presets_file_path:String = current_theme.resource_path.get_basename() +".theme.json" if current_theme and current_theme.resource_path else ""):		
+	if not presets_file_path.is_empty() and FileAccess.file_exists(presets_file_path):
+		var file: = FileAccess.open(presets_file_path,FileAccess.WRITE)
+		file.store_string(JSON.stringify(presets))
+		file.close()	
 
 func _exit_tree() -> void:
 	if current_theme and not Engine.is_editor_hint():		
-		save_presets_to_file(current_theme.resource_path.get_basename() +".theme.json")
+		save_presets_to_file()
 		ResourceSaver.save(current_theme)
 
 func get_color_as_image(color:Color):
@@ -736,32 +746,53 @@ func get_color_as_image(color:Color):
 
 func update_stylebox(stylebox_preset_name):
 	const default_stylebox_color = Color.DARK_GRAY
-	var s:StyleBoxFlat = styleboxes[stylebox_preset_name]
-	var data = presets.styleboxes[stylebox_preset_name]
-	s.bg_color = default_stylebox_color if data.background_color == "default" else presets.colors[data.background_color]
-	s.skew.x = 0 if data.background_skew_x == "default" else presets.numbers[data.background_skew_x]	
-	s.skew.y = 0 if data.background_skew_y == "default" else presets.numbers[data.background_skew_y]	
-	s.draw_center = true if data.background_enabled == "default" else presets.numbers[data.background_enabled]	
-	
-	s.border_color = Color() if data.border_color == "default" else presets.colors[data.border_color]
-	s.border_width_left = 0 if data.border_left == "default" else presets.numbers[data.border_left]	
-	s.border_width_top = 0 if data.border_top == "default" else presets.numbers[data.border_top]	
-	s.border_width_right = 0 if data.border_right == "default" else presets.numbers[data.border_top]	
-	s.border_width_bottom = 0 if data.border_bottom == "default" else presets.numbers[data.border_top]	
-	s.border_blend = false if data.border_bottom == "default" else bool(presets.numbers[data.border_blend])
-	
-	s.corner_radius_top_left = 8 if data.corners_top_left == "default" else presets.numbers[data.corners_top_left]
-	s.corner_radius_top_right = 8 if data.corners_top_right == "default" else presets.numbers[data.corners_top_right]
-	s.corner_radius_bottom_right = 8 if data.corners_bottom_right == "default" else presets.numbers[data.corners_bottom_right]
-	s.corner_radius_bottom_left = 8 if data.corners_bottom_left == "default" else presets.numbers[data.corners_bottom_left]		
-	s.corner_detail = 8 if data.corners_detail == "default" else presets.numbers[data.corners_detail]
-	
-	s.content_margin_left = 0 if data.margins_left == "default" else presets.numbers[data.margins_left]
-	s.content_margin_top = 0 if data.margins_top == "default" else presets.numbers[data.margins_top]
-	s.content_margin_right = 0 if data.margins_right == "default" else presets.numbers[data.margins_right]
-	s.content_margin_bottom = 0 if data.margins_bottom == "default" else presets.numbers[data.margins_bottom]
-	
-	s.shadow_color = Color(0,0,0,0.5) if data.shadow_color == "default" else presets.colors[data.shadow_color]
-	s.shadow_size = 0 if data.shadow_size == "default" else presets.numbers[data.shadow_size]
-	s.shadow_offset.x = 0 if data.shadow_offset_x == "default" else presets.numbers[data.shadow_offset_x]
-	s.shadow_offset.y = 0 if data.shadow_offset_y == "default" else presets.numbers[data.shadow_offset_y]	
+	if presets.styleboxes[stylebox_preset_name].is_texture:
+		var s:StyleBoxTexture = styleboxes[stylebox_preset_name]
+		var data = presets.styleboxes[stylebox_preset_name]
+		var path = presets.textures[data.texture_texture]
+		s.texture = null if data.texture_texture == "default" else load(path) if FileAccess.file_exists(path) else null
+		s.modulate_color = default_stylebox_color if data.texture_modulate == "default" else presets.colors[data.texture_modulate]		
+		s.draw_center = true if data.texture_draw_center == "default" else true if presets.numbers[data.texture_draw_center] != 0 else false
+		
+		s.texture_margin_left = 0 if data.texture_left == "default" else presets.numbers[data.texture_left]
+		s.texture_margin_top = 0 if data.texture_top == "default" else presets.numbers[data.texture_top]
+		s.texture_margin_right = 0 if data.texture_right == "default" else presets.numbers[data.texture_right]
+		s.texture_margin_bottom = 0 if data.texture_bottom == "default" else presets.numbers[data.texture_bottom]
+		
+		s.axis_stretch_horizontal = StyleBoxTexture.AXIS_STRETCH_MODE_STRETCH if data.texture_tile_x == "default" else min(2, presets.numbers[data.texture_tile_x])
+		s.axis_stretch_vertical = StyleBoxTexture.AXIS_STRETCH_MODE_STRETCH if data.texture_tile_y == "default" else min(2, presets.numbers[data.texture_tile_x])		
+
+		s.content_margin_left = 0 if data.margins_left == "default" else presets.numbers[data.margins_left]
+		s.content_margin_top = 0 if data.margins_top == "default" else presets.numbers[data.margins_top]
+		s.content_margin_right = 0 if data.margins_right == "default" else presets.numbers[data.margins_right]
+		s.content_margin_bottom = 0 if data.margins_bottom == "default" else presets.numbers[data.margins_bottom]		
+	else:
+		var s:StyleBoxFlat = styleboxes[stylebox_preset_name]
+		var data = presets.styleboxes[stylebox_preset_name]
+		s.bg_color = default_stylebox_color if data.background_color == "default" else presets.colors[data.background_color]
+		s.skew.x = 0 if data.background_skew_x == "default" else presets.numbers[data.background_skew_x]	
+		s.skew.y = 0 if data.background_skew_y == "default" else presets.numbers[data.background_skew_y]	
+		s.draw_center = true if data.background_enabled == "default" else true if presets.numbers[data.background_enabled] != 0 else false
+		
+		s.border_color = Color() if data.border_color == "default" else presets.colors[data.border_color]
+		s.border_width_left = 0 if data.border_left == "default" else presets.numbers[data.border_left]	
+		s.border_width_top = 0 if data.border_top == "default" else presets.numbers[data.border_top]	
+		s.border_width_right = 0 if data.border_right == "default" else presets.numbers[data.border_top]	
+		s.border_width_bottom = 0 if data.border_bottom == "default" else presets.numbers[data.border_top]	
+		s.border_blend = false if data.border_bottom == "default" else true if presets.numbers[data.border_blend] != 0 else false
+		
+		s.corner_radius_top_left = 8 if data.corners_top_left == "default" else presets.numbers[data.corners_top_left]
+		s.corner_radius_top_right = 8 if data.corners_top_right == "default" else presets.numbers[data.corners_top_right]
+		s.corner_radius_bottom_right = 8 if data.corners_bottom_right == "default" else presets.numbers[data.corners_bottom_right]
+		s.corner_radius_bottom_left = 8 if data.corners_bottom_left == "default" else presets.numbers[data.corners_bottom_left]		
+		s.corner_detail = 8 if data.corners_detail == "default" else presets.numbers[data.corners_detail]
+		
+		s.content_margin_left = 0 if data.margins_left == "default" else presets.numbers[data.margins_left]
+		s.content_margin_top = 0 if data.margins_top == "default" else presets.numbers[data.margins_top]
+		s.content_margin_right = 0 if data.margins_right == "default" else presets.numbers[data.margins_right]
+		s.content_margin_bottom = 0 if data.margins_bottom == "default" else presets.numbers[data.margins_bottom]
+		
+		s.shadow_color = Color(0,0,0,0.5) if data.shadow_color == "default" else presets.colors[data.shadow_color]
+		s.shadow_size = 0 if data.shadow_size == "default" else presets.numbers[data.shadow_size]
+		s.shadow_offset.x = 0 if data.shadow_offset_x == "default" else presets.numbers[data.shadow_offset_x]
+		s.shadow_offset.y = 0 if data.shadow_offset_y == "default" else presets.numbers[data.shadow_offset_y]	

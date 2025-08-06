@@ -27,6 +27,7 @@ func add_stylebox_preset():
 		i+=1
 		new_name = "new_stylebox_" + str(i)
 	presets.styleboxes[new_name] = {
+		"is_texture": false,
 		"background_color":"default",
 		"background_enabled":"default",
 		"background_skew_x":"default",
@@ -171,7 +172,7 @@ func add_texture_preset_ui(key):
 	
 func rename_preset(new_name, dictionary_parent,node):
 	if " " in new_name or new_name in dictionary_parent.keys(): 			
-		node.reset_name()
+		node.reset_name()		
 	else:
 		var old_name = node.preset_name
 		dictionary_parent[new_name] = dictionary_parent[old_name]

@@ -27,6 +27,7 @@ func _ready():
 		dialog.file_mode = FileDialog.FILE_MODE_OPEN_FILE
 		dialog.title = "select texture"
 		dialog.add_filter("*.png,*.jpg,*.webp,*.svg,*.tiff,*.bmp,*.gif ", "images")		
+		dialog.add_filter("*.tres,*.res", "texture resource")		
 		dialog.file_selected.connect(func(path):
 			%texture_preview.texture = load(path)
 			%texture_preview.tooltip_text = path.get_file().get_basename()
