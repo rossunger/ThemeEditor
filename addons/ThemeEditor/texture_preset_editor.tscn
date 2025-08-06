@@ -1,0 +1,39 @@
+[gd_scene load_steps=5 format=3 uid="uid://bm0ux4a5ohskg"]
+
+[ext_resource type="Script" uid="uid://bdhf6efxhkfq6" path="res://addons/ThemeEditor/texture_preset_editor.gd" id="1_avpvr"]
+[ext_resource type="Texture2D" uid="uid://cjct6oh8b1nyb" path="res://addons/ThemeEditor/icon_duplicate.svg" id="2_53ux1"]
+[ext_resource type="Texture2D" uid="uid://do53psudsfxxr" path="res://addons/ThemeEditor/icon_open.svg" id="3_nne7h"]
+[ext_resource type="Texture2D" uid="uid://dl72oslti4imj" path="res://addons/ThemeEditor/icon_close.svg" id="4_4gs3h"]
+
+[node name="TexturePresetEditor" type="HBoxContainer"]
+offset_right = 230.0
+offset_bottom = 32.0
+size_flags_horizontal = 3
+script = ExtResource("1_avpvr")
+
+[node name="texture_preview" type="TextureRect" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+expand_mode = 4
+stretch_mode = 5
+
+[node name="preset_name" type="LineEdit" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="duplicate_button" type="Button" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+icon = ExtResource("2_53ux1")
+
+[node name="load_texture_button" type="Button" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+icon = ExtResource("3_nne7h")
+
+[node name="remove_preset_button" type="Button" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+icon = ExtResource("4_4gs3h")
