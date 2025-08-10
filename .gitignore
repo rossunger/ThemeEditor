@@ -1,5 +1,6 @@
 addons/3d_viewport*
 addons/script*
+addons/ExtraUIControls/
 .godot/
 project.godot
 preset_manager.png.import

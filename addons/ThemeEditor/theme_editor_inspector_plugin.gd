@@ -3,8 +3,10 @@ extends EditorInspectorPlugin
 
 var target:Control
 var possible_types = []
+var special_base_types = []
 var presets
 var current_theme_path = ""
+var object_type
 
 func theme_loaded(path):
 	current_theme_path = path
@@ -19,8 +21,13 @@ func get_theme():
 	
 func _can_handle(object: Object) -> bool:			
 	possible_types = []
+	object_type = object.get_class()
+	if object is Node and object.scene_file_path:
+		var special_base_name = object.scene_file_path.get_file().get_basename().to_pascal_case()
+		if special_base_name in special_base_types:
+			object_type = special_base_name
 	for type in presets.classes.keys():
-		if object.get_class() in presets.classes[type].base_type:
+		if object_type in presets.classes[type].base_type:
 			possible_types.push_back(type)				
 	if len(possible_types)>0:
 		target = object
@@ -40,7 +47,8 @@ func _parse_begin(object):
 			option.select(i)
 		i+=1	
 	option.item_selected.connect(func(idx):
-		target.theme_type_variation = option.get_item_text(idx) +"_"+ target.get_class()
+		var type = option.get_item_text(idx)
+		target.theme_type_variation = type +"_"+ target.get_class() if not object_type in special_base_types else type
 	)	
 	var hbox = HBoxContainer.new()
 	hbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL

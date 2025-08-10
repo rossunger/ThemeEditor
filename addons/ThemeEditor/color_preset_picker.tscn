@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://cloo8l0sc2rds"]
 
 [ext_resource type="Script" uid="uid://dtkklh4y3ovwo" path="res://addons/ThemeEditor/color_preset_picker.gd" id="1_kghg6"]
-[ext_resource type="Theme" uid="uid://oqf4h5mwq8uo" path="res://addons/ThemeEditor/default_theme.theme" id="1_o4iwf"]
+[ext_resource type="Theme" uid="uid://bg6p8u2ssl31i" path="res://addons/ThemeEditor/default_theme.theme" id="1_o4iwf"]
 [ext_resource type="Texture2D" uid="uid://dl72oslti4imj" path="res://addons/ThemeEditor/icon_close.svg" id="2_5qb3j"]
 
 [node name="ColorPresetPicker" type="HBoxContainer"]
@@ -15,7 +15,7 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
 
-[node name="label" type="LineEdit" parent="."]
+[node name="preset_name" type="LineEdit" parent="."]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3

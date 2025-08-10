@@ -8,13 +8,11 @@ border_width_right = 2
 border_width_bottom = 2
 border_color = Color(0, 0, 0, 0.666667)
 border_blend = true
-corner_radius_top_left = 12
-corner_radius_top_right = 12
 corner_radius_bottom_right = 12
 corner_radius_bottom_left = 12
 
 [node name="PresetManagerPanel" type="PanelContainer"]
-custom_minimum_size = Vector2(280, 350)
+custom_minimum_size = Vector2(280, 100)
 size_flags_horizontal = 0
 size_flags_vertical = 0
 theme_override_styles/panel = SubResource("StyleBoxFlat_u8r5y")

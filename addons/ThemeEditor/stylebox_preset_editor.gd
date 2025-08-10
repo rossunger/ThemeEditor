@@ -9,6 +9,8 @@ signal remove_requested
 @onready var tree:Tree = %Tree
 var preset_name
 var is_texture = false
+var tweak_mode_only = false
+
 var flat_props = {
 	"background":["color", "enabled", "skew_x", "skew_y"], 
 	"border": ["color", "left", "top","right", "bottom", "blend"],
@@ -23,9 +25,21 @@ var texture_props = {
 var presets
 
 func _ready():	
-	%preset_name_input.text = preset_name
-	%preset_name_input.text_submitted.connect(func(text):rename_requested.emit(text))
-	%preset_name_input.focus_exited.connect(func(): rename_requested.emit(preset_name))
+	%preset_name.text = preset_name
+	if not tweak_mode_only:
+		%preset_name.text_submitted.connect(func(text):rename_requested.emit(text))
+		%preset_name.focus_exited.connect(func(): rename_requested.emit(preset_name))
+		%duplicate_stylebox_button.pressed.connect(duplicate_stylebox)
+		%remove_preset_button.pressed.connect(func():
+			remove_requested.emit(preset_name)
+		)
+	else:
+		%preset_name.editable = false
+		%preset_name.focus_mode = FOCUS_NONE
+		%preset_name.selecting_enabled = false
+		%duplicate_stylebox_button.queue_free()
+		%remove_preset_button.queue_free()
+		
 	%show_preset_details_button.toggled.connect(func(toggle_on):
 		%show_preset_details_button.text = "<" if not toggle_on else "v"
 		%is_texture_button.visible = toggle_on		
@@ -48,16 +62,13 @@ func _ready():
 					for prop in flat_props[category]:
 						if not presets.styleboxes[preset_name].has(category + "_" + prop):
 							presets.styleboxes[preset_name][category + "_" + prop] = "default"
-				
+			stylebox_changed.emit()
 			build_tree()
 	)
 	%is_texture_button.button_pressed = is_texture
 	build_tree()
-	tree.item_edited.connect(item_edited)
-	%duplicate_stylebox_button.pressed.connect(duplicate_stylebox)
-	%remove_preset_button.pressed.connect(func():
-		remove_requested.emit(preset_name)
-	)
+	tree.item_edited.connect(item_edited)	
+		
 func duplicate_stylebox():	
 	presets.styleboxes[preset_name + "_copy"] = presets.styleboxes[preset_name].duplicate(true)
 	stylebox_duplicated.emit(preset_name + "_copy")
@@ -139,4 +150,4 @@ func get_color_as_image(color:Color):
 	return ImageTexture.create_from_image( img )
 
 func reset_name():
-	%preset_name_input.text = preset_name
+	%preset_name.text = preset_name

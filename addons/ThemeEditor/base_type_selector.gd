@@ -4,6 +4,7 @@ extends Control
 signal confirmed
 
 var type_list = []
+var special_type_list = []
 var initial_selection = []
 @onready var tree:Tree = %base_type_tree
 func _ready():
@@ -20,7 +21,12 @@ func confirm():
 	var result = []
 	for item:TreeItem in tree.get_root().get_children():
 		if item.is_checked(0):
-			result.push_back(item.get_text(0))
+			var txt = item.get_text(0)
+			if txt in special_type_list:
+				result = [txt]
+				break
+			else:
+				result.push_back(item.get_text(0))
 	confirmed.emit(result)
 	if get_parent() is Window:
 		get_parent().queue_free()

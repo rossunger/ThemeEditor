@@ -1,6 +1,14 @@
-[gd_scene load_steps=2 format=3 uid="uid://coudk3me6xvwh"]
+[gd_scene load_steps=8 format=3 uid="uid://coudk3me6xvwh"]
 
-[ext_resource type="Theme" uid="uid://oqf4h5mwq8uo" path="res://addons/ThemeEditor/default_theme.theme" id="1_lu1mw"]
+[ext_resource type="Theme" uid="uid://buavg5qe2abif" path="res://demo_theme.theme" id="1_lhitn"]
+[ext_resource type="PackedScene" uid="uid://m5hovspa3nvn" path="res://addons/ExtraUIControls/input_otp.tscn" id="2_cfoqm"]
+[ext_resource type="Script" uid="uid://djkkus5eatw8k" path="res://demo_ui.gd" id="2_lhitn"]
+[ext_resource type="PackedScene" uid="uid://cgt657e4n0pk0" path="res://addons/ExtraUIControls/accordion.tscn" id="2_u81os"]
+[ext_resource type="PackedScene" uid="uid://bho8o6h3xki8f" path="res://addons/ExtraUIControls/calendar_date_picker.tscn" id="3_cfoqm"]
+[ext_resource type="PackedScene" uid="uid://dvfqmxepbsc0l" path="res://addons/ThemeEditor/runtime_theme_editor.tscn" id="5_ctoih"]
+
+[sub_resource type="ButtonGroup" id="ButtonGroup_lhitn"]
+resource_local_to_scene = false
 
 [node name="DemoUi" type="PanelContainer"]
 anchors_preset = 15
@@ -8,8 +16,9 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme = ExtResource("1_lu1mw")
-theme_type_variation = &"panel_main"
+theme = ExtResource("1_lhitn")
+theme_type_variation = &"panel_main_PanelContainer"
+script = ExtResource("2_lhitn")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 2
@@ -17,7 +26,7 @@ layout_mode = 2
 [node name="Panel2" type="PanelContainer" parent="VBoxContainer"]
 custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
-theme_type_variation = &"container_tall_PanelContainer"
+theme_type_variation = &"panel_menu_PanelContainer"
 
 [node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/Panel2"]
 layout_mode = 2
@@ -66,6 +75,7 @@ layout_mode = 2
 theme_type_variation = &"h1_Label"
 text = "Welcome to the game"
 horizontal_alignment = 1
+uppercase = true
 
 [node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/CenterContainer/VBoxContainer"]
 custom_minimum_size = Vector2(100, 0)
@@ -77,7 +87,8 @@ theme_type_variation = &"margin_y_MarginContainer"
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
 size_flags_horizontal = 6
-theme_type_variation = &"box_m"
+size_flags_vertical = 3
+theme_type_variation = &"container_full_rect_VBoxContainer"
 
 [node name="Button" type="Button" parent="VBoxContainer/CenterContainer/VBoxContainer/VBoxContainer"]
 custom_minimum_size = Vector2(100, 0)
@@ -88,13 +99,13 @@ text = "Play"
 [node name="Button2" type="Button" parent="VBoxContainer/CenterContainer/VBoxContainer/VBoxContainer"]
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
-theme_type_variation = &"button_menu"
+theme_type_variation = &"button_outline_Button"
 text = "Options"
 
 [node name="Button3" type="Button" parent="VBoxContainer/CenterContainer/VBoxContainer/VBoxContainer"]
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
-theme_type_variation = &"button_menu"
+theme_type_variation = &"button_outline_Button"
 text = "Exit"
 
 [node name="MarginContainer2" type="MarginContainer" parent="VBoxContainer/CenterContainer/VBoxContainer"]
@@ -134,79 +145,60 @@ theme_type_variation = &"margin_y_MarginContainer"
 layout_mode = 2
 theme_type_variation = &"margin_y_MarginContainer"
 
-[node name="HFlowContainer" type="HFlowContainer" parent="VBoxContainer/CenterContainer/VBoxContainer"]
-custom_minimum_size = Vector2(450, 0)
+[node name="TextureRect" type="CheckBox" parent="VBoxContainer"]
 layout_mode = 2
-theme_override_constants/h_separation = 20
-theme_override_constants/v_separation = 20
-alignment = 1
-last_wrap_alignment = 2
+button_pressed = true
+button_group = SubResource("ButtonGroup_lhitn")
+text = "Checkbox
+"
 
-[node name="Panel" type="Panel" parent="VBoxContainer/CenterContainer/VBoxContainer/HFlowContainer"]
-custom_minimum_size = Vector2(100, 100)
+[node name="TextureRect2" type="CheckBox" parent="VBoxContainer"]
 layout_mode = 2
-theme_type_variation = &"panel_light_bg_class_Panel"
+button_group = SubResource("ButtonGroup_lhitn")
+text = "Checkbox"
 
-[node name="Label" type="Label" parent="VBoxContainer/CenterContainer/VBoxContainer/HFlowContainer/Panel"]
+[node name="TextureRect3" type="CheckBox" parent="VBoxContainer"]
+layout_mode = 2
+button_group = SubResource("ButtonGroup_lhitn")
+text = "Checkbox"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="Accordion" parent="VBoxContainer/HBoxContainer" instance=ExtResource("2_u81os")]
+layout_mode = 2
+horizontal_expand = null
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="CalendarDatePicker" parent="Control" instance=ExtResource("3_cfoqm")]
+custom_minimum_size = Vector2(200, 200)
+layout_mode = 2
+anchors_preset = 0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = -85.0
+offset_top = 36.0
+offset_right = 365.0
+offset_bottom = 236.0
+theme_type_variation = &"calendar_red"
+
+[node name="InputOtp" parent="Control" instance=ExtResource("2_cfoqm")]
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_type_variation = &"p_Label"
-text = "I am light bg with dark text"
-autowrap_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 63.0
+offset_top = -146.0
+offset_right = 463.0
+offset_bottom = -86.0
 
-[node name="Panel3" type="Panel" parent="VBoxContainer/CenterContainer/VBoxContainer/HFlowContainer"]
-custom_minimum_size = Vector2(100, 100)
+[node name="RuntimeThemeEditor" parent="." instance=ExtResource("5_ctoih")]
+unique_name_in_owner = true
+visible = false
 layout_mode = 2
-theme_type_variation = &"panel_dark_bg_class_Panel"
-
-[node name="Label" type="Label" parent="VBoxContainer/CenterContainer/VBoxContainer/HFlowContainer/Panel3"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_type_variation = &"p_dark_Label"
-text = "I am a dark bg with light text"
-autowrap_mode = 3
-
-[node name="Panel4" type="Panel" parent="VBoxContainer/CenterContainer/VBoxContainer/HFlowContainer"]
-custom_minimum_size = Vector2(100, 100)
-layout_mode = 2
-theme_type_variation = &"panel_default_class_Panel"
-
-[node name="Panel5" type="Panel" parent="VBoxContainer/CenterContainer/VBoxContainer/HFlowContainer"]
-custom_minimum_size = Vector2(100, 100)
-layout_mode = 2
-theme_type_variation = &"panel_modal_class_Panel"
-
-[node name="Label" type="Label" parent="VBoxContainer/CenterContainer/VBoxContainer/HFlowContainer/Panel5"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_type_variation = &"p_dark_Label"
-text = "I am a modal"
-autowrap_mode = 3
-
-[node name="Panel6" type="Panel" parent="VBoxContainer/CenterContainer/VBoxContainer/HFlowContainer"]
-custom_minimum_size = Vector2(100, 100)
-layout_mode = 2
-theme_type_variation = &"panel_card_class_Panel"
-
-[node name="Label" type="Label" parent="VBoxContainer/CenterContainer/VBoxContainer/HFlowContainer/Panel6"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_type_variation = &"p_dark_Label"
-text = "I am a card with drop shadows"
-autowrap_mode = 3

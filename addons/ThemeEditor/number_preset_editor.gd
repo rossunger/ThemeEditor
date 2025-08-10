@@ -7,22 +7,31 @@ signal remove_requested
 
 var preset_name: String
 var preset_value: int
+var tweak_mode_only = false
 
 func _ready():
 	%preset_name.text = preset_name
-	%preset_name.text_submitted.connect(func(text):
-		rename_requested.emit(text)
-	)
-	%preset_name.focus_exited.connect(func():
-		rename_requested.emit(%preset_name.text)
-	)	
+	if not tweak_mode_only:
+		%preset_name.text_submitted.connect(func(text):
+			rename_requested.emit(text)
+		)
+		%preset_name.focus_exited.connect(func():
+			rename_requested.emit(%preset_name.text)
+		)	
+		%remove_preset_button.pressed.connect(func():
+			remove_requested.emit(preset_name)		
+		)
+	else:
+		%remove_preset_button.queue_free()
+		%preset_name.editable = false
+		%preset_name.focus_mode = FOCUS_NONE
+		%preset_name.selecting_enabled = false
 	update_value(str(preset_value))
 	%value.text_submitted.connect(update_value)
 	%value.focus_exited.connect(update_value)
 	%value.set_meta("value",preset_value)
-	%remove_preset_button.pressed.connect(func():
-		remove_requested.emit(preset_name)		
-	)
+	
+		
 func reset_name():
 	%preset_name.text = preset_name
 

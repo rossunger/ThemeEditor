@@ -1,0 +1,35 @@
+[gd_scene load_steps=4 format=3 uid="uid://dvfqmxepbsc0l"]
+
+[ext_resource type="Theme" uid="uid://c7gwb63yqp3qs" path="res://addons/ThemeEditor/theme_editor_theme.tres" id="1_nb0tx"]
+[ext_resource type="Script" uid="uid://bqc5rmiyiwr6u" path="res://addons/ThemeEditor/runtime_theme_editor.gd" id="1_nbufs"]
+[ext_resource type="PackedScene" uid="uid://cb1a2dmfj7oea" path="res://addons/ThemeEditor/theme_editor.tscn" id="2_nb0tx"]
+
+[node name="RuntimeThemeEditor" type="HBoxContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme = ExtResource("1_nb0tx")
+theme_override_constants/separation = 0
+script = ExtResource("1_nbufs")
+
+[node name="ThemeEditor" parent="." instance=ExtResource("2_nb0tx")]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 200)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 8
+
+[node name="vsplit" type="VSplitContainer" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+split_offset = 440
+
+[node name="Control" type="Control" parent="vsplit"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2

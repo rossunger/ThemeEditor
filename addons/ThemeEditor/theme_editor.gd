@@ -1,6 +1,10 @@
 @tool 
 extends PanelContainer
 
+# Preset_name aka variable_name
+# type aka class (like css class)
+
+
 signal theme_loaded
 
 @onready var class_list_tree:Tree = %class_list_tree
@@ -12,6 +16,7 @@ var control_list = []
 var fav_controls_list = "PanelContainer,Label,Button,Panel,CheckBox,CheckButton,TextureRect,ColorRect,NinePatchRect,HSeparator,VSeparator,ItemList,LineEdit,Tree,HSlider,VSlider,SpinBox,OptionButton,HSplitContainer,VSplitContainer".split(',')
 var container_list = "HBoxContainer,VBoxContainer,ScrollContainer,HFlowContainer,VFlowContainer,MarginContainer,GridContainer,Container,AspectRatioContainer,TabContainer,BoxContainer,CenterContainer,FlowContainer,SubViewportContainer,SplitContainer".split(',')
 var other_controls_list = "Range,ScrollBar,HScrollBar,VScrollBar,Slider,LinkButton,ReferenceRect,TabBar,Separator,HSeparator,VSeparator,ProgressBar,TextureProgressBar,VideoStreamPlayer,TextEdit,CodeEdit,MenuBar,MenuButton,ColorPicker,ColorPickerButton,RichTextLabel,GraphElement,GraphNode,GraphFrame,GraphEdit".split(',')
+var special_controls_list = "Accordion,CalendarDatePicker,Pagination,SpinBoxExtra,SpinBoxButtons,OptionButtonSpinBox".split(',')
 
 ##TREE BUTTON ICONS
 var close_icon = preload("icon_close.svg")
@@ -22,188 +27,48 @@ var current_theme:Theme
 ##DEFAULTS
 var default_theme_path = "res://addons/ThemeEditor/default_theme.theme"
 var default_props = JSON.parse_string( FileAccess.get_file_as_string("res://addons/ThemeEditor/base_type_properties.json"))
-var extra_node_property_names = ["min_x", "min_y", "expand_x", "expand_y"]
+var extra_node_property_names = JSON.parse_string( FileAccess.get_file_as_string("res://addons/ThemeEditor/extra_node_property_names.json"))
 var example_nodes = {}
 
 var styleboxes = {}
 var presets = {"colors":{}, "numbers":{}, "styleboxes":{}, "fonts":{}, "textures":{}, "classes":{}}
-var default_presets ={
-	"colors":{
-		"default": "",
-		"primary_color": Color.MEDIUM_PURPLE,
-		"secondary_color": Color.DARK_SLATE_GRAY,
-		"accent_color": Color.GOLD,
-		"bg_color": Color.LIGHT_BLUE,		
-		"bg_dark_color": Color(0.1,0.1,0.1,1.0),		
-		"font_color": Color.MEDIUM_ORCHID,		
-	},
-	"numbers":{
-		"default": "",
-		"corners_rounded": 10,
-		"corners_sharp": 10,
-		"border_width": 1,
-		"shadow_size": 1,
-		"shadow_offset": 1,
-		"font_max": 100,
-		"font_large": 80,
-		"font_medium": 50,
-		"font_small": 32,
-		"font_tiny": 16,
-		"separation": 8,		
-		"margin": 4,
-	},
-	"fonts":{
-		"default": "",
-		"title": null,
-		"subtitle": null,
-		"paragraph": null,		
-	},
-	"styleboxes":{
-		"default": "",
-		"panel_bg_light":{
-			"background_color": "bg_color",
-			"background_enabled": "ONE",
-			"background_skew_x": "ZERO",
-			"background_skew_y": "ZERO",
-			"border_blend": "default",
-			"border_bottom": "default",
-			"border_color": "default",
-			"border_left": "default",
-			"border_right": "default",
-			"border_top": "default",
-			"corners_bottom_left": "default",
-			"corners_bottom_right": "default",
-			"corners_detail": "default",
-			"corners_top_left": "default",
-			"corners_top_right": "default",
-			"margins_bottom": "margin",
-			"margins_left": "margin",
-			"margins_right": "margin",
-			"margins_top": "margin",
-			"shadow_color": "shadow_color",
-			"shadow_offset_x": "ZERO",
-			"shadow_offset_y": "shadow_offset_small",
-			"shadow_size": "shadow_size_small"
-		},
-		"panel_bg_dark":{
-			"background_color": "bg_dark_color",
-			"background_enabled": "ONE",
-			"background_skew_x": "ZERO",
-			"background_skew_y": "ZERO",
-			"border_blend": "default",
-			"border_bottom": "default",
-			"border_color": "default",
-			"border_left": "default",
-			"border_right": "default",
-			"border_top": "default",
-			"corners_bottom_left": "default",
-			"corners_bottom_right": "default",
-			"corners_detail": "default",
-			"corners_top_left": "default",
-			"corners_top_right": "default",
-			"margins_bottom": "margin",
-			"margins_left": "margin",
-			"margins_right": "margin",
-			"margins_top": "margin",
-			"shadow_color": "shadow_color",
-			"shadow_offset_x": "ZERO",
-			"shadow_offset_y": "shadow_offset_small",
-			"shadow_size": "shadow_size_small"
-		}
-	},
-	"textures":{
-		"default": "",
-	},
-	"classes":{
-		"h1":{	
-			"base_type": ["Label"],
-			"font_color": "primary_color",
-			"font_size": "font_large",
-			"font_outline_color":"default", 
-			"font_shadow_color":"default", 
-			"line_spacing":"default", 
-			"outline_size":"default", 
-			"shadow_offset_x":"default",
-			"shadow_offset_y":"default", 
-			"shadow_outline_size":"default", 			
-			"font":"default", 
-			"stylebox_normal":"default"
-		},
-		"h2":{	
-			"base_type": ["Label"],
-			"font_color": "accent_color",
-			"font_size": "font_medium",
-			"font_outline_color":"default", 
-			"font_shadow_color":"default", 
-			"line_spacing":"default", 
-			"outline_size":"default", 
-			"shadow_offset_x":"default",
-			"shadow_offset_y":"default", 
-			"shadow_outline_size":"default", 			
-			"font":"default", 
-			"stylebox_normal":"default"
-		},
-		"h3":{	
-			"base_type": ["Label"],
-			"font_color": "secondary_color",
-			"font_size": "font_small",
-			"font_outline_color":"default", 
-			"font_shadow_color":"default", 
-			"line_spacing":"default", 
-			"outline_size":"default", 
-			"shadow_offset_x":"default",
-			"shadow_offset_y":"default", 
-			"shadow_outline_size":"default", 			
-			"font":"default", 
-			"stylebox_normal":"default"
-		},
-		"p":{
-			"base_type": ["Label"],
-			"font_color": "font_color",
-			"font_size": "font_small",
-			"font_outline_color":"default", 
-			"font_shadow_color":"default", 
-			"line_spacing":"default", 
-			"outline_size":"default", 
-			"shadow_offset_x":"default",
-			"shadow_offset_y":"default", 
-			"shadow_outline_size":"default", 			
-			"font":"paragraph", 
-			"stylebox_normal":"default"
-		},
-		"div":{
-			"panel": "panel_bg_light"
-		},
-		"div2":{
-			"panel": "panel_bg_dark"
-		}
-	}
-	
-}
 
 var preset_manager = null
-
+var tweak_only_mode = false: 
+	set(val):
+		if tweak_only_mode == val: return
+		tweak_only_mode = val		
+		%new_theme_button.visible = not tweak_only_mode
+		%add_class_button.visible = not tweak_only_mode
+		if tweak_only_mode:
+			var root = class_list_tree.get_root()
+			if not root: return
+			for item:TreeItem in class_list_tree.get_root().get_children():
+				item.clear_buttons()
+var confirmed_edit_default_theme = false
 var debug = false
 
 func init_presets(presets_file_path):
 	styleboxes.clear()
-	if FileAccess.file_exists(presets_file_path):		
-		presets.clear()
-		var new_presets = JSON.parse_string(FileAccess.get_file_as_string(presets_file_path))		
-		for key in new_presets.keys():
-			presets[key] = new_presets[key]
-		for key in presets.colors.keys():			
-			var color = presets.colors[key].replace("(","").replace(")","").split(",") if presets.colors[key] else null
-			presets.colors[key] = Color(float(color[0]), float(color[1]), float(color[2]), float(color[3])) if color else Color(0,0,0,0)
-		for key in presets.numbers.keys():			
-			presets.numbers[key] = int(presets.numbers[key])
-		for key in presets.styleboxes.keys():		
-			if key == "default": continue
-			if not presets.styleboxes[key].has("is_texture"):
-				presets.styleboxes[key]["is_texture"] = false
-	else:
-		presets = default_presets.duplicate(true)
-		save_presets_to_file(presets_file_path)
+	if not FileAccess.file_exists(presets_file_path):			
+		push_error(presets_file_path, " doesn't exist. loading defaults")			
+		presets_file_path = "res://addons/ThemeEditor/default_theme.theme.json"
+		if not FileAccess.file_exists(presets_file_path):
+			push_error("Failed loading default theme presets. Default file doesnt exist")			
+			return						
+	presets.clear()
+	var new_presets = JSON.parse_string(FileAccess.get_file_as_string(presets_file_path))		
+	for key in new_presets.keys():
+		presets[key] = new_presets[key]
+	for key in presets.colors.keys():			
+		var color = presets.colors[key].replace("(","").replace(")","").split(",") if presets.colors[key] else null
+		presets.colors[key] = Color(float(color[0]), float(color[1]), float(color[2]), float(color[3])) if color else Color(0,0,0,0)
+	for key in presets.numbers.keys():			
+		presets.numbers[key] = int(presets.numbers[key])
+	for key in presets.styleboxes.keys():		
+		if key == "default": continue
+		if not presets.styleboxes[key].has("is_texture"):
+			presets.styleboxes[key]["is_texture"] = false	
 
 func init_tree_signals():
 	class_list_tree.item_edited.connect(class_list_edited)
@@ -224,7 +89,8 @@ func init_examples():
 			add_item_to_example(type, base_type)		
 			
 func add_item_to_example(type, base_type):
-	if not ClassDB.can_instantiate(base_type): return
+	if base_type in special_controls_list: return
+	if not ClassDB.can_instantiate(base_type): return		
 	var node:Control = ClassDB.instantiate(base_type)
 	%example.add_child(node)
 	node.theme_type_variation = type + "_" +base_type
@@ -236,13 +102,12 @@ func add_item_to_example(type, base_type):
 
 func change_theme_gui_input(event, who):
 	if event is InputEventMouseButton and event.pressed:
-		if current_theme and event.button_index == MOUSE_BUTTON_LEFT and who.has_meta("theme_path"):					
+		if current_theme and event.button_index == MOUSE_BUTTON_LEFT and who.has_meta("theme_path"):								
 			save_presets_to_file()
 			switch_theme(who.get_meta("theme_path"))
 		elif event.button_index == MOUSE_BUTTON_RIGHT:
 			if not who.button_pressed:			
-				who.queue_free()
-			#show_change_theme_dialog(who)
+				who.queue_free()			
 
 func _ready():			
 	init_tree_signals()	
@@ -251,8 +116,10 @@ func _ready():
 	%add_theme_button.pressed.connect(show_add_theme_dialog)	
 	%new_theme_button.pressed.connect(show_new_theme_dialog)		
 	%edit_presets_button.pressed.connect(show_preset_manager)	
-	if debug: load_theme.call_deferred(default_theme_path)
-
+	if debug: 
+		load_theme.call_deferred(default_theme_path)
+	%examples_split_container.visible = debug
+	
 func show_new_theme_dialog():
 	var dialog := FileDialog.new()	
 	dialog.file_mode = FileDialog.FILE_MODE_SAVE_FILE
@@ -305,11 +172,28 @@ func switch_theme(path:String):
 	var new_theme = load(path) #if FileAccess.file_exists(path) else Theme.new()			
 	init_presets(base + ".theme.json")		
 	build_tree()	
-	init_examples()
+	if debug:
+		init_examples()
 	change_theme(new_theme)
 	theme_loaded.emit(path)
 	
-func load_theme(path:String):		
+func load_theme(path:String):	
+	if path == default_theme_path:
+		if not confirmed_edit_default_theme:
+			var dialog = ConfirmationDialog.new()
+			dialog.dialog_text = "Are you sure you want to edit the default theme?"
+			dialog.confirmed.connect(func():
+				confirmed_edit_default_theme = true
+				load_theme.call_deferred(path)
+				dialog.queue_free()
+			)		
+			dialog.canceled.connect(dialog.queue_free)
+			dialog.close_requested.connect(dialog.queue_free)
+			add_child(dialog)	
+			dialog.popup_centered.call_deferred()
+			return
+		else:
+			confirmed_edit_default_theme = false
 	var theme_name = path.get_file().get_basename()
 	if %open_themes_hbox.has_node(theme_name): 
 		%open_themes_hbox.get_node(theme_name).button_pressed = true
@@ -325,36 +209,74 @@ func load_theme(path:String):
 		%open_themes_hbox.add_child(button)
 	switch_theme(path)
 		
-	
+func rename_preset(category, old_name, new_name):		
+	presets[category][new_name] = presets[category][old_name]
+	presets[category].erase(old_name)	
+	for type in presets.classes.keys():			
+		for prop in presets.classes[type].keys():
+			var value = presets.classes[type][prop]			
+			if typeof(value) == TYPE_STRING and value == old_name:
+				presets.classes[type][prop] = new_name		
+	for type in presets.styleboxes.keys():
+		if type == "default": continue
+		for prop in presets.styleboxes[type].keys():
+			var value = presets.styleboxes[type][prop]			
+			if typeof(value) == TYPE_STRING and value == old_name:
+				presets.styleboxes[type][prop] = new_name		
+	if details_tree_prop_nodes.has(old_name):
+		for prop_item:TreeItem in details_tree_prop_nodes[old_name]:						
+			prop_item.set_text(1,",".join(presets[category].keys()).replace("default", " ") )			
+			prop_item.set_range(1, presets[category].keys().find(new_name) )	
+		details_tree_prop_nodes[new_name] = details_tree_prop_nodes[old_name]
+		details_tree_prop_nodes.erase(old_name)
+			#detail_edited(prop_item)
+			
 func show_preset_manager():
-	if Engine.is_editor_hint():
-		#Editor Plugin will connect the preset_manager.presets_changed signals
+	if preset_manager:							
 		preset_manager.show()
 		preset_manager.load_presets()
 	else:
 		var preset_manager = preload("preset_manager.tscn").instantiate()
 		preset_manager.presets = presets
+		preset_manager.special_base_types = special_controls_list
 		add_child(preset_manager)					
-		preset_manager.presets_changed.connect(apply_variable_to_theme)		
+		preset_manager.preset_changed.connect(apply_variable_to_theme)		
+		preset_manager.preset_rename_requested.connect(rename_preset)
 	
 func change_theme(new_theme:Theme):		
+	if new_theme == current_theme: return		
+	apply_all_to_theme(new_theme)
 	current_theme = new_theme		
-	apply_all_to_theme()
-	%example.theme = current_theme	
+	if debug:
+		%example.theme = current_theme	
 	build_tree()	
+	if preset_manager:
+		preset_manager.load_presets()
 	if Engine.is_editor_hint():
 		var node = EditorInterface.get_edited_scene_root()
+		if node.scene_file_path and node.scene_file_path.begins_with("res://addons/ThemeEditor/"): return
 		if node is Control:
 			node.theme = new_theme
+	else:
+		var node = get_tree().root
+		set_theme_for_child_controls(node, new_theme)
+			
+func set_theme_for_child_controls(parent, theme):
+	for child in parent.get_children():
+		if child is Control:
+			child.theme = theme
+		else:
+			set_theme_for_child_controls(child, theme)
+			
 			
 func detail_edited(specific_item:TreeItem = null):
-	var item = specific_item if specific_item else details_tree.get_edited()
+	var item: TreeItem = specific_item if specific_item else details_tree.get_edited()
 	var col = details_tree.get_edited_column() if not specific_item else 1
 	var prop = item.get_metadata(0)		
 	var category = ""
 	if col == 1:
 		var class_item = class_list_tree.get_selected()
-		var type = class_item.get_metadata(0)
+		var original_type = class_item.get_metadata(0)
 		var i = int(item.get_range(1))
 		var list 
 		if "color" in prop: 
@@ -384,48 +306,98 @@ func detail_edited(specific_item:TreeItem = null):
 				item.set_text(0, prop)
 			else:		
 				item.set_text(0, str(prop, " ", presets.numbers[list[i]] ))		
-		item.set_tooltip_text(1, list[i])
-		var parent_item = item.get_parent()
-		if list[i] != "default":
-			parent_item.remove_child(item)
-			details_tree_nodes["active"].add_child(item)
-		else:			
-			pass #move to all, some, or invalid
-		presets.classes[type][prop] = list[i]		
-		if not specific_item:
-			apply_prop_to_theme(type, prop)
-			save_presets_to_file()
+		item.set_tooltip_text(1, list[i])					
+		var sub_type = item.get_parent().get_metadata(0)
+		var is_special = sub_type is String
+		if is_special:					
+			presets.classes[original_type][sub_type][prop] = list[i]			
 		else:
-			var old_preset_name = item.get_metadata(1)	
+			presets.classes[original_type][prop] = list[i]		
+			var parent_item = item.get_parent()
+			if list[i] != "default":
+				parent_item.remove_child(item)
+				details_tree_nodes["active"].add_child(item)						
+			
+		
+		if not specific_item: # item needs updating after user changed prop value
+			var extra_node_properties = {}		
+			var type_list = current_theme.get_type_list()
+			current_theme.set_block_signals(true)
+			if is_special:				
+				var base_type = presets.classes[original_type][sub_type]["base_type"][0]
+				var type = get_resolved_type(original_type,sub_type)					
+				if not type in type_list:
+					current_theme.add_type(type)			
+				if not current_theme.is_type_variation(type, base_type):
+					current_theme.set_type_variation(type,base_type)		
+				var preset_name = presets.classes[original_type][sub_type][prop]
+				apply_prop_to_theme(current_theme, type, prop, base_type, preset_name, extra_node_properties)				
+			else:
+				for base_type in presets.classes[original_type]["base_type"]:					
+					var type = get_resolved_type(original_type,base_type)				
+					if not type in type_list:
+						current_theme.add_type(type)			
+					if not current_theme.is_type_variation(type, base_type):
+						current_theme.set_type_variation(type,base_type)																
+					var preset_name = presets.classes[original_type][prop]
+					apply_prop_to_theme(current_theme, type, prop, base_type, preset_name, extra_node_properties)									
+			update_extra_node_properties(extra_node_properties)	
+			current_theme.set_block_signals(false)		
+			if Engine.is_editor_hint():
+				EditorInterface.get_edited_scene_root().propagate_notification(NOTIFICATION_THEME_CHANGED)
+			else:
+				get_tree().current_scene.propagate_notification(NOTIFICATION_THEME_CHANGED)				
+			save_presets_to_file()
+		else: # variable got updated and needs to be reflected in the ui
+			var old_preset_name = item.get_metadata(1)
 			if old_preset_name == list[i]: return
-			if details_tree_prop_nodes.has(old_preset_name) and details_tree_prop_nodes[old_preset_name].has(prop):
-				details_tree_prop_nodes[old_preset_name].erase(prop)
+			if details_tree_prop_nodes.has(old_preset_name) and details_tree_prop_nodes[old_preset_name].has(specific_item):
+				details_tree_prop_nodes[old_preset_name].erase(specific_item)
 				if len(details_tree_prop_nodes[old_preset_name])==0:
 					details_tree_prop_nodes.erase(old_preset_name)
 			if not details_tree_prop_nodes.has(list[i]):
 				details_tree_prop_nodes[list[i]] = []
 			details_tree_prop_nodes[list[i]].push_back(specific_item)
+	
+func validate_special_type(original_type, special_base_type):	
+	for sub_type in presets.classes[original_type].keys():
+		if sub_type == "base_type": continue
+		if not presets.classes[original_type][sub_type] is Dictionary: 		
+			presets.classes[original_type].erase(sub_type)
+	for base_type in default_props[special_base_type]:		
+		for sub_type in default_props[special_base_type][base_type]:						
+			if not presets.classes[original_type].has(sub_type):				
+				presets.classes[original_type][sub_type] = {"base_type":[base_type]}
+				for prop in default_props[base_type]:
+					presets.classes[original_type][sub_type][prop] = "default"
+					
 
+func build_special_details_tree(original_type, special_base_type):
+	validate_special_type(original_type, special_base_type)
+	var root := details_tree.create_item()				
+	#for type in get_resolved_types(original_type, special_base_type):			
+	for sub_base_type in default_props[special_base_type].keys():			
+		for sub_type_suffix in default_props[special_base_type][sub_base_type]:
+			var base_item = root.create_child()			
+			var sub_type = get_resolved_type(original_type,sub_type_suffix)
+			base_item.set_text(0, sub_type)		
+			base_item.set_metadata(0, sub_type_suffix)					
+			for prop in default_props[sub_base_type]:				
+				var prop_item = base_item.create_child()						
+				var preset_name = presets.classes[original_type][sub_type_suffix][prop] if presets.classes[original_type][sub_type_suffix].has(prop) else "default"				
+				update_detail_tree_prop_item_ui(prop_item, prop, preset_name)
+	
 func build_details_tree():
 	details_tree.clear()
 	details_tree_prop_nodes.clear()	
 	var item = class_list_tree.get_selected()	
 	if not item: return	
 	var type = item.get_text(0) # class name
-	var root := details_tree.create_item()	
-	var common_root = root.create_child()
-	details_tree_nodes["common"] = common_root
-	common_root.set_text(0, "Sizing")	
-	for prop in extra_node_property_names:		
-		var prop_item := common_root.create_child()
-		prop_item.set_text(0, prop)
-		prop_item.set_metadata(0, prop)
-		prop_item.set_cell_mode(1,TreeItem.CELL_MODE_RANGE)
-		prop_item.set_editable(1, true)		
-		prop_item.set_text(1, ",".join(presets.numbers.keys()).replace("default", " ") )			
-		var preset_name = presets.classes[type][prop] if presets.classes[type].has(prop) else "default"		
-		prop_item.set_range(1, presets.numbers.keys().find(preset_name.replace(" ", "default")) )				
-		prop_item.set_metadata(1, preset_name)
+	var base_types = presets.classes[type].base_type
+	if len(base_types) and base_types[0] in special_controls_list:
+		build_special_details_tree(type, base_types[0])
+		return	
+	var root := details_tree.create_item()				
 	var active_root = root.create_child()
 	details_tree_nodes["active"] = active_root
 	active_root.set_text(0, "Active")
@@ -438,19 +410,34 @@ func build_details_tree():
 	var invalid_root = root.create_child()
 	details_tree_nodes["invalid"] = invalid_root
 	invalid_root.set_text(0, "Invalid")
-		
+	for prop in extra_node_property_names.common:		
+		var prop_item := available_all_root.create_child()
+		prop_item.set_text(0, prop)
+		prop_item.set_metadata(0, prop)
+		prop_item.set_cell_mode(1,TreeItem.CELL_MODE_RANGE)
+		prop_item.set_editable(1, true)		
+		prop_item.set_text(1, ",".join(presets.numbers.keys()).replace("default", " ") )			
+		var preset_name = presets.classes[type][prop] if presets.classes[type].has(prop) else "default"		
+		prop_item.set_range(1, presets.numbers.keys().find(preset_name.replace(" ", "default")) )				
+		prop_item.set_metadata(1, preset_name)
 	var available_props = []	
 	var not_available_all_props = []
-	var all_props = presets.classes[type].keys()
-	for base_type in presets.classes[type].base_type:				
+	var all_props = presets.classes[type].keys()	
+	for base_type in base_types:			
 		for prop in default_props[base_type]:
 			if not prop in available_props:
 				available_props.push_back(prop)
 			if not prop in all_props:
-				all_props.push_back(prop)				
-	for base_type in presets.classes[type].base_type:
+				all_props.push_back(prop)		
+							
+	for base_type in presets.classes[type].base_type:		
 		for prop in available_props:
-			if not prop in default_props[base_type] and not prop in not_available_all_props:
+			if prop in not_available_all_props: continue
+			if base_type in special_controls_list: 
+				for base_base_type in default_props[base_type].keys():					
+					if not prop in default_props[base_base_type]:
+						not_available_all_props.push_back(prop)		
+			elif not prop in default_props[base_type]:
 				not_available_all_props.push_back(prop)		
 	
 	for prop in all_props:	
@@ -476,42 +463,39 @@ func build_details_tree():
 			details_tree_prop_nodes[preset_name] = []
 		if not details_tree_prop_nodes.has(prop_item):
 			details_tree_prop_nodes[preset_name].push_back(prop_item)
-		prop_item.set_text(0, prop)
-		prop_item.set_metadata(0, prop)
-		prop_item.set_cell_mode(1,TreeItem.CELL_MODE_RANGE)
-		prop_item.set_editable(1, true)
-		prop_item.set_metadata(1, preset_name)
-		if "color" in prop:			
-			prop_item.set_text(1, ",".join(presets.colors.keys()).replace("default", " "))			
-			var value = presets.colors[ preset_name ]			
-			if preset_name == "default":
-				prop_item.set_icon(0, null)
-			else:
-				prop_item.set_icon(0,get_color_as_image(value))				
-			prop_item.set_range(1, presets.colors.keys().find(preset_name.replace(" ", "default")) )				
-		elif prop.begins_with("stylebox_"):			
-			prop_item.set_text(1, ",".join(presets.styleboxes.keys()).replace("default", " "))										
-			prop_item.set_range(1, presets.styleboxes.keys().find(preset_name.replace(" ", "default")) )
-		elif prop == "font":						
-			prop_item.set_text(1, ",".join(presets.fonts.keys()).replace("default", " "))			
-			prop_item.set_range(1, presets.fonts.keys().find(preset_name.replace(" ", "default")) )			
-		elif prop.begins_with("texture_"):			
-			prop_item.set_text(1, ",".join(presets.textures.keys()).replace("default", " ") )										
-			prop_item.set_range(1, presets.textures.keys().find(preset_name.replace(" ", "default")) )				
-		else:			
-			prop_item.set_text(1, ",".join(presets.numbers.keys()).replace("default", " ") )			
-			prop_item.set_range(1, presets.numbers.keys().find(preset_name.replace(" ", "default")) )				
+		update_detail_tree_prop_item_ui(prop_item, prop, preset_name)
 	invalid_root.visible = invalid_root.get_child_count() > 0		
-			
-func update_class_details(category:="", changed_preset=""):
-	var update_all = true #category.is_empty()	
-	var item = class_list_tree.get_selected()	
-	if not update_all:
-		if not details_tree.get_root(): return
-		for group in details_tree.get_root().get_children():			
-			for prop_item in group.get_children():
-				if prop_item.get_metadata(1) == changed_preset:
-					detail_edited(prop_item)
+	available_some_root.visible = available_some_root.get_child_count() > 0		
+	available_all_root.visible = available_all_root.get_child_count() > 0		
+	
+
+func update_detail_tree_prop_item_ui(prop_item, prop, preset_name):
+	prop_item.set_text(0, prop)
+	prop_item.set_metadata(0, prop)
+	prop_item.set_cell_mode(1,TreeItem.CELL_MODE_RANGE)
+	prop_item.set_editable(1, true)
+	prop_item.set_metadata(1, preset_name)
+	if "color" in prop:			
+		prop_item.set_text(1, ",".join(presets.colors.keys()).replace("default", " "))			
+		var value = presets.colors[ preset_name ]			
+		if preset_name == "default":
+			prop_item.set_icon(0, null)
+		else:
+			prop_item.set_icon(0,get_color_as_image(value))				
+		prop_item.set_range(1, presets.colors.keys().find(preset_name.replace(" ", "default")) )						
+	elif prop.begins_with("stylebox_"):			
+		prop_item.set_text(1, ",".join(presets.styleboxes.keys()).replace("default", " "))										
+		prop_item.set_range(1, presets.styleboxes.keys().find(preset_name.replace(" ", "default")) )
+	elif prop == "font":						
+		prop_item.set_text(1, ",".join(presets.fonts.keys()).replace("default", " "))			
+		prop_item.set_range(1, presets.fonts.keys().find(preset_name.replace(" ", "default")) )			
+	elif prop.begins_with("texture_"):			
+		prop_item.set_text(1, ",".join(presets.textures.keys()).replace("default", " ") )										
+		prop_item.set_range(1, presets.textures.keys().find(preset_name.replace(" ", "default")) )				
+	else:			
+		prop_item.set_text(1, ",".join(presets.numbers.keys()).replace("default", " ") )			
+		prop_item.set_range(1, presets.numbers.keys().find(preset_name.replace(" ", "default")) )				
+
 			
 func add_class():
 	var type = "new_class"
@@ -519,24 +503,30 @@ func add_class():
 		presets.classes[type] = {"base_type": ["Button"]}		
 		for key in default_props["Button"]:
 			presets.classes[type][key] = "default"
-		add_item_to_example(type, "Button")
+		if debug:
+			add_item_to_example(type, "Button")
 		build_tree()
 
 func validate_class_rename(new_class:String)->bool:
 	if new_class in presets.classes.keys(): return false
-	if new_class in control_list: return false
-	if " " in new_class: return false
+	if " " in new_class: return false		
 	return true
 
 func duplicate_class(old_class, new_class, remove_old=false):
 	if old_class == new_class or not presets.classes.has(old_class): return
 	if not validate_class_rename(new_class): return	
+	if new_class in control_list: 
+		if not remove_old: return				
+		presets.classes[old_class].base_type = []		
 	presets.classes[new_class] = presets.classes[old_class]	
-	for base_type in presets.classes[new_class].base_type:
-		add_item_to_example(new_class, base_type)
-	if remove_old:
-		example_nodes[old_class].queue_free()
-		presets.classes.erase(old_class)		
+	## EXAMPLES
+	if debug:
+		for base_type in presets.classes[new_class].base_type:
+			add_item_to_example(new_class, base_type)
+		if remove_old:
+			if example_nodes.has(old_class):
+				example_nodes[old_class].queue_free()
+	presets.classes.erase(old_class)		
 	
 func class_list_edited():
 	var item = class_list_tree.get_edited()
@@ -547,12 +537,12 @@ func class_list_edited():
 		if not validate_class_rename(new_class):
 			item.set_text(0, old_class)
 			return		
-		else:
+		else:			
 			duplicate_class(old_class, new_class, true)
 			item.set_metadata(0, new_class)			
-	elif col == 1:	
-		var base_type = control_list[item.get_range(1)]
-		presets.classes[item.get_text(0)]["base_type"] = [base_type]
+	#elif col == 1:	
+		#var base_type = control_list[item.get_range(1)]
+		#presets.classes[item.get_text(0)]["base_type"] = [base_type]
 		
 func class_list_button_clicked(item: TreeItem, column: int, id: int, mouse_button_index: int):
 	if column == 0:
@@ -567,6 +557,7 @@ func class_list_button_clicked(item: TreeItem, column: int, id: int, mouse_butto
 		var popup := Window.new()		
 		var node = preload("base_type_selector.tscn").instantiate()
 		node.type_list = control_list
+		node.special_type_list = special_controls_list
 		var type = item.get_text(0)
 		node.initial_selection = presets.classes[type].base_type
 		popup.add_child(node)
@@ -575,8 +566,7 @@ func class_list_button_clicked(item: TreeItem, column: int, id: int, mouse_butto
 		popup.close_requested.connect(popup.queue_free)		
 		node.confirmed.connect(func(list):
 			presets.classes[type].base_type = list
-			update_ui_type_base_classes(item, presets.classes[type].base_type)
-			update_class_details()			
+			update_ui_type_base_classes(item, presets.classes[type].base_type)				
 		)
 		popup.wrap_controls = true		
 		
@@ -586,153 +576,241 @@ func build_tree():
 	var root = class_list_tree.create_item()	
 	var list = presets.classes.keys()
 	list.sort()	
-	control_list = fav_controls_list + container_list + other_controls_list  #base types
+	control_list = fav_controls_list + container_list + other_controls_list + special_controls_list  #base types
 	for type in list:
 		var tree_item := root.create_child()
 		tree_item.set_text(0, type)
 		tree_item.set_metadata(0, type)
-		#tree_item.set_editable(0, true)		
-		tree_item.add_button(0,duplicate_icon, 0,false, "Duplicate")
-		tree_item.add_button(0,close_icon, 1,false, "Remove")
+		#tree_item.set_editable(0, true)
+		if not tweak_only_mode:		
+			tree_item.add_button(0,duplicate_icon, 0,false, "Duplicate")
+			tree_item.add_button(0,close_icon, 1,false, "Remove")
+			tree_item.add_button(1, edit_icon, 0, false, "edit base types")	
 		if type in control_list: 
 			tree_item.set_tooltip_text(1, "class is a base type, can't inherit")
 			continue		
 		update_ui_type_base_classes(tree_item, presets.classes[type].base_type)
-		tree_item.add_button(1, edit_icon, 0, false, "edit base types")				
+		
 
 func update_ui_type_base_classes(tree_item, list):
-	tree_item.set_text(1, ", ".join(list))
-	tree_item.set_tooltip_text(1, "base type: " + ", ".join(list))
+	var text = ", ".join(list) if len(list)>0 else ""
+	tree_item.set_text(1, text)	
+	tree_item.set_tooltip_text(1, text)
 
-func apply_variable_to_theme(category, preset_name):	
+func apply_variable_to_theme(category, preset_name):		
+	current_theme.set_block_signals(true)
+	var extra_node_properties = {}
 	for type in presets.classes.keys():
-		for prop in presets.classes[type].keys():
-			if prop == "base_type": continue
+		if len(presets.classes[type].base_type)==1 and presets.classes[type].base_type[0] in special_controls_list:
+			for sub_type in presets.classes[type].keys():
+				if sub_type == "base_type": continue
+				for prop in presets.classes[type][sub_type].keys():
+					if prop == "base_type": continue
+					#if prop == "is_texture": continue
+					if not presets.classes[type].has(sub_type):
+						print("NO SUBYPE ", type, ":", sub_type)
+					if not presets.classes[type][sub_type].has(prop):
+						print(" no prop: ", type, sub_type, ": ", prop)												
+					if presets.classes[type][sub_type][prop] == preset_name:												
+						apply_prop_to_theme(current_theme, get_resolved_type(type, sub_type), prop, presets.classes[type][sub_type].base_type[0], preset_name, extra_node_properties)	
+						if not details_tree_prop_nodes.has(preset_name): continue
+						for prop_item in details_tree_prop_nodes[preset_name]:
+							detail_edited(prop_item)
+		else:
+			for prop in presets.classes[type].keys():				
+				if prop == "base_type": continue
+				if prop == "is_texture": continue
+				if presets.classes[type][prop] == preset_name:					
+					for base_type in presets.classes[type].base_type:						
+						apply_prop_to_theme(current_theme, get_resolved_type(type, base_type), prop, base_type, preset_name, extra_node_properties)	
+						if not details_tree_prop_nodes.has(preset_name): continue
+						for prop_item in details_tree_prop_nodes[preset_name]:
+							detail_edited(prop_item)								
+	var styleboxes_to_update = []
+	for stylebox in presets.styleboxes.keys():
+		if stylebox == "default": continue
+		for prop in presets.styleboxes[stylebox].keys():
 			if prop == "is_texture": continue
-			if presets.classes[type][prop] == preset_name:
-				apply_prop_to_theme(type, prop)	
-				if not details_tree_prop_nodes.has(preset_name): continue
-				for prop_item in details_tree_prop_nodes[preset_name]:
-					detail_edited(prop_item)
-	save_presets_to_file()
-				
-
-func apply_prop_to_theme(type:String, prop:String, extra_node_properties:Dictionary={}):
+			if presets.styleboxes[stylebox][prop] == preset_name:
+				if not stylebox in styleboxes_to_update:
+					styleboxes_to_update.push_back(stylebox)
+					break
+	for stylebox in styleboxes_to_update:
+		update_stylebox(stylebox)
+	
+	update_extra_node_properties(extra_node_properties)
+	save_presets_to_file()			
+	current_theme.set_block_signals(false)			
+	if Engine.is_editor_hint():
+		EditorInterface.get_edited_scene_root().propagate_notification(NOTIFICATION_THEME_CHANGED)
+	else:
+		get_tree().current_scene.propagate_notification(NOTIFICATION_THEME_CHANGED)
+						
+func apply_prop_to_theme(the_theme: Theme, type:String, prop:String, base_type:String, preset_name:String, extra_node_properties:Dictionary={}):
 	if prop == "base_type":return	
 	if prop == "is_texture": return
-	if prop in extra_node_property_names:					
-		if not extra_node_properties.has(type):extra_node_properties[type] = []
+	if prop in extra_node_property_names.common:					
+		if not extra_node_properties.has(type):
+			extra_node_properties[type] = []
 		if not prop in extra_node_properties[type]: 								
 			extra_node_properties[type].push_back(prop)							
-	elif "color" in prop:										
-		if presets.classes[type][prop] == "default":			
-			for base_type in presets.classes[type].base_type:										
-				if current_theme.has_color(prop,get_resolved_type(type, base_type)):
-					current_theme.clear_color(prop, get_resolved_type(type, base_type))
+		return	
+	if extra_node_property_names.has(base_type) and prop in extra_node_property_names[base_type]: 
+		if not extra_node_properties.has(type):
+			extra_node_properties[type] = []
+		if not prop in extra_node_properties[type]: 								
+			extra_node_properties[type].push_back(prop)									
+		return
+	if "color" in prop:										
+		if preset_name == "default":				
+			if the_theme.has_color(prop,type):
+				the_theme.clear_color(prop, type)
 		else:
-			var value = presets.colors[ presets.classes[type][prop] ]	
-			for base_type in presets.classes[type].base_type:																			
-				current_theme.set_color(prop, get_resolved_type(type,base_type), value)			
-	elif "stylebox_" in prop:
-		if presets.classes[type][prop] == "default":
-			for base_type in presets.classes[type].base_type:										
-				if current_theme.has_stylebox(prop,get_resolved_type(type,base_type)):
-					current_theme.clear_stylebox(prop, get_resolved_type(type,base_type))
-		else:					
-			var stylebox_preset_name = presets.classes[type][prop]			
-			if presets.styleboxes[stylebox_preset_name].is_texture:
-				if not styleboxes.has(stylebox_preset_name) or not styleboxes[stylebox_preset_name] is StyleBoxTexture:				
-					styleboxes[stylebox_preset_name] = StyleBoxTexture.new()									
+			var value = presets.colors[ preset_name ]			
+			the_theme.set_color(prop, type, value)			
+	elif "stylebox_" in prop:		
+		if preset_name == "default":	
+			if the_theme.has_stylebox(prop,type):
+				the_theme.clear_stylebox(prop, type)
+		else:							
+			if presets.styleboxes[preset_name].is_texture:
+				if not styleboxes.has(preset_name) or not styleboxes[preset_name] is StyleBoxTexture:				
+					styleboxes[preset_name] = StyleBoxTexture.new()									
 			else:
-				if not styleboxes.has(stylebox_preset_name) or not styleboxes[stylebox_preset_name] is StyleBoxFlat:								
-					styleboxes[stylebox_preset_name] = StyleBoxFlat.new()									
-			update_stylebox(stylebox_preset_name)															
-			for base_type in presets.classes[type].base_type:										
-				current_theme.set_stylebox(prop.trim_prefix("stylebox_"), get_resolved_type(type,base_type), styleboxes[stylebox_preset_name])
+				if not styleboxes.has(preset_name) or not styleboxes[preset_name] is StyleBoxFlat:								
+					styleboxes[preset_name] = StyleBoxFlat.new()									
+			update_stylebox(preset_name)																	
+			the_theme.set_stylebox(prop.trim_prefix("stylebox_"), type, styleboxes[preset_name])
+		return
 	elif prop == "font":		
-		if presets.classes[type][prop] == "default":
-			var df = current_theme.default_font
-			current_theme.default_font = null
-			for base_type in presets.classes[type].base_type:										
-				if current_theme.has_font(prop,get_resolved_type(type,base_type)):
-					current_theme.clear_font(prop, get_resolved_type(type,base_type))					
-			current_theme.default_font = df
+		if preset_name == "default":
+			var df = the_theme.default_font
+			the_theme.default_font = null	
+			if the_theme.has_font(prop,type):
+				the_theme.clear_font(prop, type)					
+			the_theme.default_font = df
 		else:
-			var path = presets.fonts[ presets.classes[type][prop] ]				
-			if path and FileAccess.file_exists(path):				
-				for base_type in presets.classes[type].base_type:											
-					current_theme.set_font(prop, get_resolved_type(type,base_type), load(path))
+			var path = presets.fonts[ preset_name ]				
+			if path and FileAccess.file_exists(path):						
+				the_theme.set_font(prop, type, load(path))
 	elif "texture_" in prop:
-		if presets.classes[type][prop] == "default":
-			for base_type in presets.classes[type].base_type:										
-				if current_theme.has_icon(prop,get_resolved_type(type,base_type)):
-					current_theme.clear_icon(prop, get_resolved_type(type,base_type))
+		if preset_name == "default":		
+			if the_theme.has_icon(prop,type):
+				the_theme.clear_icon(prop, type)
 		else:
-			var value = presets.textures[ presets.classes[type][prop] ]	
-			for base_type in presets.classes[type].base_type:										
-				current_theme.set_icon(prop, get_resolved_type(type,base_type), load(value))
-	else:				
-		if "font_size" in prop:									
-			if presets.classes[type][prop] == "default":
-				var df = current_theme.default_font_size
-				current_theme.default_font_size = 0
-				for base_type in presets.classes[type].base_type:											
-					if current_theme.has_font_size(prop,get_resolved_type(type,base_type)):
-						current_theme.clear_font_size(prop, get_resolved_type(type,base_type))					
-				current_theme.default_font_size = df
-			else:				
-				var value = presets.numbers[ presets.classes[type][prop] ]	
-				for base_type in presets.classes[type].base_type:											
-					current_theme.set_font_size(prop, get_resolved_type(type,base_type), int(value))
-		else:	
-			if presets.classes[type][prop] == "default":
-				for base_type in presets.classes[type].base_type:											
-					if current_theme.has_constant(prop,get_resolved_type(type,base_type)):
-						current_theme.clear_constant(prop, get_resolved_type(type,base_type))						
-			else:
-				var value = presets.numbers[ presets.classes[type][prop] ]	
-				for base_type in presets.classes[type].base_type:											
-					current_theme.set_constant(prop, get_resolved_type(type,base_type), value)
+			var value = presets.textures[ preset_name ]	
+			the_theme.set_icon(prop, type, load(value))		
+	#ELSE NUMBER
+	elif "font_size" in prop:									
+		if preset_name == "default":
+			var df = the_theme.default_font_size
+			the_theme.default_font_size = 0		
+			if the_theme.has_font_size(prop,type):
+				the_theme.clear_font_size(prop, type)					
+			the_theme.default_font_size = df
+		else:				
+			var value = presets.numbers[ preset_name ]		
+			the_theme.set_font_size(prop, type, int(value))		
+	else:	
+		if preset_name == "default":															
+			if the_theme.has_constant(prop,type):
+					the_theme.clear_constant(prop, type)						
+		else:
+			var value = presets.numbers[ preset_name ]			
+			the_theme.set_constant(prop, type, value)
+		
 
 func get_resolved_type(type,base_type):
-	return type +"_"+base_type	
+	return type +"_"+base_type if not base_type.is_empty() else type	
 	
-func apply_all_to_theme():		
-	current_theme.clear()
+func apply_all_to_theme(the_theme = current_theme):			
+	var type_list = the_theme.get_type_list() 
 	var extra_node_properties = {}
+	the_theme.set_block_signals(true)
 	for original_type in presets.classes.keys():
-		for base_type in presets.classes[original_type]["base_type"]:			
-			var type = original_type+"_"+base_type
-			current_theme.add_type(type)
-			current_theme.set_type_variation(type,base_type)				
-			for prop in presets.classes[original_type].keys():			
-				apply_prop_to_theme(original_type, prop, extra_node_properties)				
+		if len(presets.classes[original_type].base_type) == 1 and presets.classes[original_type].base_type[0] in special_controls_list:				
+			for sub_type in presets.classes[original_type].keys():
+				if sub_type == "base_type": continue
+				if not presets.classes[original_type][sub_type] is Dictionary:
+					continue				
+				var base_type = presets.classes[original_type][sub_type]["base_type"][0]
+				var type = get_resolved_type(original_type,sub_type)					
+				if not type in type_list:
+					the_theme.add_type(type)
+				type_list.remove_at(type_list.find(type))		
+				if not the_theme.is_type_variation(type, base_type):
+					the_theme.set_type_variation(type,base_type)
+				for prop in presets.classes[original_type][sub_type].keys():		
+					if prop == "base_type":continue
+					var preset_name = presets.classes[original_type][sub_type][prop]
+					apply_prop_to_theme(the_theme, type, prop, base_type, preset_name, {})				
+		else:				
+			for base_type in presets.classes[original_type]["base_type"]:									
+				var type = get_resolved_type(original_type,base_type)				
+				if not type in type_list:
+					the_theme.add_type(type)
+				else:						
+					type_list.remove_at(type_list.find(type))				
+				if not the_theme.is_type_variation(type, base_type):
+					the_theme.set_type_variation(type,base_type)											
+				for prop in presets.classes[original_type].keys():					
+					if prop == "base_type": continue					
+					var preset_name = presets.classes[original_type][prop]											
+					apply_prop_to_theme(the_theme, type, prop, base_type, preset_name, extra_node_properties)				
+	for type in type_list:
+		the_theme.remove_type(type)
+	the_theme.set_block_signals(false)		
 	if Engine.is_editor_hint():
-		save_presets_to_file()			
+		#save_presets_to_file()		
+		EditorInterface.get_edited_scene_root().propagate_notification(NOTIFICATION_THEME_CHANGED)
+	else:	
+		get_tree().current_scene.propagate_notification(NOTIFICATION_THEME_CHANGED)
+	
+	
 	update_extra_node_properties(extra_node_properties)
-
+	
 func update_extra_node_properties(extra_node_properties):
-	var root = EditorInterface.get_edited_scene_root() if Engine.is_editor_hint() else get_tree().root
+	var root = EditorInterface.get_edited_scene_root() if Engine.is_editor_hint() else get_tree().root	
 	if not root: return
-	var types = extra_node_properties.keys()	
+	var types = extra_node_properties.keys()		
 	for node:Control in root.find_children("*", "Control"):		
-		var type = node.theme_type_variation
-		if type.is_empty() or not type in types: continue							
+		var type = node.theme_type_variation.trim_suffix("_"+node.get_class())
+		if type.is_empty() or not type in types: continue									
 		for key in extra_node_properties[type]:									
-			if key == "min_x":								
+			if key == "min_size_x":								
 				node.custom_minimum_size.x = presets.numbers[presets.classes[type][key]]
-			elif key == "min_y":
+			elif key == "min_size_y":
 				node.custom_minimum_size.y = presets.numbers[presets.classes[type][key]]
 			elif key == "expand_x":
 				node.size_flags_horizontal = node.size_flags_horizontal | Control.SIZE_EXPAND if presets.numbers[presets.classes[type][key]] else node.size_flags_horizontal & ~Control.SIZE_EXPAND
 			elif key == "expand_y":
 				node.size_flags_vertical = node.size_flags_vertical | Control.SIZE_EXPAND if presets.numbers[presets.classes[type][key]] else node.size_flags_vertical & ~Control.SIZE_EXPAND
-
+			elif key == "text_align_x":				
+				node.horizontal_alignment = clamp(presets.numbers[presets.classes[type][key]], 0, 3)
+			elif key == "text_align_y":
+				node.vertical_alignment = clamp(presets.numbers[presets.classes[type][key]], 0, 3)
+			elif key == "autowrap":
+				node.autowrap_mode = clamp(presets.numbers[presets.classes[type][key]], 0, 3)
+			elif key == "uppercase":
+				node.uppercase = true if presets.numbers[presets.classes[type][key]] else false						
+			elif key in ["align_x","align_y"]:
+				node.alignment = presets.numbers[presets.classes[type][key]]
+			elif key in ["last_wrap_align_x", "last_wrap_align_y"]:
+				node.last_wrap_alignment = presets.numbers[presets.classes[type][key]]
+			elif key == "max_columns":
+				node.max_columns = presets.numbers[presets.classes[type][key]]
+			elif key == "color":
+				node.color = presets.colors[presets.classes[type][key]]
+			#elif 
+			#"TextureProgressBar": ["texture_under", "texture_over", "texture_progress", "tint_under", "tint_over", "tint_progress"],		
+			#"TextEdit": ["wrap_mode", "fit_y", "fit_x"],
+			#"TextureButton": ["texture_normal","texture_pressed","texture_hover","texture_disabled","texture_focused","texture_click_mask", "stretch_mode" ],
+				
 func save_presets_to_file(presets_file_path:String = current_theme.resource_path.get_basename() +".theme.json" if current_theme and current_theme.resource_path else ""):		
-	if not presets_file_path.is_empty() and FileAccess.file_exists(presets_file_path):
+	if not presets_file_path.is_empty() and FileAccess.file_exists(presets_file_path):		
 		var file: = FileAccess.open(presets_file_path,FileAccess.WRITE)
 		file.store_string(JSON.stringify(presets))
-		file.close()	
+		file.close()			
 
 func _exit_tree() -> void:
 	if current_theme and not Engine.is_editor_hint():		
@@ -744,7 +822,7 @@ func get_color_as_image(color:Color):
 	img.fill(color)	
 	return ImageTexture.create_from_image( img )
 
-func update_stylebox(stylebox_preset_name):
+func update_stylebox(stylebox_preset_name):		
 	const default_stylebox_color = Color.DARK_GRAY
 	if presets.styleboxes[stylebox_preset_name].is_texture:
 		var s:StyleBoxTexture = styleboxes[stylebox_preset_name]
@@ -769,7 +847,7 @@ func update_stylebox(stylebox_preset_name):
 	else:
 		var s:StyleBoxFlat = styleboxes[stylebox_preset_name]
 		var data = presets.styleboxes[stylebox_preset_name]
-		s.bg_color = default_stylebox_color if data.background_color == "default" else presets.colors[data.background_color]
+		s.bg_color = default_stylebox_color if data.background_color == "default" else presets.colors[data.background_color]		
 		s.skew.x = 0 if data.background_skew_x == "default" else presets.numbers[data.background_skew_x]	
 		s.skew.y = 0 if data.background_skew_y == "default" else presets.numbers[data.background_skew_y]	
 		s.draw_center = true if data.background_enabled == "default" else true if presets.numbers[data.background_enabled] != 0 else false

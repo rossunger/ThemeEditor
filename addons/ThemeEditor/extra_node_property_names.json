@@ -1,0 +1,90 @@
+{
+	"common": [
+		"min_size_x",
+		"min_size_y",
+		"expand_x",
+		"expand_y"
+	],
+	"Label": [
+		"text_align_x",
+		"text_align_y",
+		"autowrap",
+		"uppercase"
+	],
+	"Button": [
+		"icon",
+		"text_align_x",
+		"icon_align_x",
+		"icon_align_y",
+		"autowrap"
+	],
+	"OptionButton": [
+		"icon",
+		"text_align_x",
+		"icon_align_x",
+		"icon_align_y",
+		"autowrap"
+	],
+	"CheckButton": [
+		"icon",
+		"text_align_x",
+		"icon_align_x",
+		"icon_align_y",
+		"autowrap"
+	],
+	"CheckBox": [
+		"icon",
+		"text_align_x",
+		"icon_align_x",
+		"icon_align_y",
+		"autowrap"
+	],
+	"VBoxContainer": [
+		"align_y"
+	],
+	"HBoxContainer": [
+		"align_x"
+	],
+	"HFlowContainer": [
+		"align_x",
+		"last_wrap_align_x"
+	],
+	"VFlowContainer": [
+		"align_y",
+		"last_wrap_align_y"
+	],
+	"LineEdit": [
+		"align_x"
+	],
+	"ItemList": [
+		"max_columns"
+	],
+	"TextureProgressBar": [
+		"texture_under",
+		"texture_over",
+		"texture_progress",
+		"tint_under",
+		"tint_over",
+		"tint_progress"
+	],
+	"SpinBox": [
+		"align_x"
+	],
+	"ColorRect": [
+		"color"
+	],
+	"TextEdit": [
+		"wrap_mode",
+		"fit_y",
+		"fit_x"
+	],
+	"TextureButton": [
+		"texture_normal",
+		"texture_pressed",
+		"texture_hover",
+		"texture_disabled",
+		"texture_focused",
+		"texture_click_mask",
+		"stretch_mode"
+	],
+}

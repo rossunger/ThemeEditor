@@ -1,6 +1,6 @@
 [gd_scene load_steps=6 format=3 uid="uid://bm0ux4a5ohskg"]
 
-[ext_resource type="Theme" uid="uid://h62ox0foxljt" path="res://demo_theme.theme" id="1_53ux1"]
+[ext_resource type="Theme" uid="uid://cdy22ofqys6lf" path="res://demo_theme.theme" id="1_53ux1"]
 [ext_resource type="Script" uid="uid://bdhf6efxhkfq6" path="res://addons/ThemeEditor/texture_preset_editor.gd" id="1_avpvr"]
 [ext_resource type="Texture2D" uid="uid://cjct6oh8b1nyb" path="res://addons/ThemeEditor/icon_duplicate.svg" id="2_53ux1"]
 [ext_resource type="Texture2D" uid="uid://do53psudsfxxr" path="res://addons/ThemeEditor/icon_open.svg" id="3_nne7h"]
@@ -24,6 +24,7 @@ stretch_mode = 5
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
+text = "<null>"
 
 [node name="duplicate_button" type="Button" parent="."]
 unique_name_in_owner = true

@@ -1,209 +1,221 @@
 [gd_scene load_steps=4 format=3 uid="uid://cyxk20ccp1ua8"]
 
-[ext_resource type="Theme" uid="uid://h62ox0foxljt" path="res://demo_theme.theme" id="1_i25dc"]
 [ext_resource type="Script" uid="uid://dkeqmgvxn67ga" path="res://addons/ThemeEditor/preset_manager.gd" id="1_xprii"]
 [ext_resource type="PackedScene" uid="uid://bf8g175yd0o4h" path="res://addons/ThemeEditor/preset_manager_panel.tscn" id="2_no825"]
+[ext_resource type="PackedScene" uid="uid://cgt657e4n0pk0" path="res://addons/ExtraUIControls/accordion.tscn" id="3_w4yau"]
 
 [node name="PresetManager" type="PanelContainer"]
+custom_minimum_size = Vector2(280, 0)
 offset_right = 1920.0
 offset_bottom = 1080.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme = ExtResource("1_i25dc")
 script = ExtResource("1_xprii")
 
 [node name="ScrollContainer" type="ScrollContainer" parent="."]
 layout_mode = 2
+horizontal_scroll_mode = 0
 
 [node name="MarginContainer" type="MarginContainer" parent="ScrollContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_constants/margin_left = 10
-theme_override_constants/margin_top = 10
-theme_override_constants/margin_right = 10
-theme_override_constants/margin_bottom = 10
+theme_override_constants/margin_left = 2
+theme_override_constants/margin_top = 2
+theme_override_constants/margin_right = 2
+theme_override_constants/margin_bottom = 2
 
-[node name="VBoxContainer" type="HFlowContainer" parent="ScrollContainer/MarginContainer"]
+[node name="Accordion" parent="ScrollContainer/MarginContainer" instance=ExtResource("3_w4yau")]
+unique_name_in_owner = true
 layout_mode = 2
-theme_override_constants/h_separation = 8
-theme_override_constants/v_separation = 8
+transition_duration = 0.125
 
-[node name="ColorsPanel" parent="ScrollContainer/MarginContainer/VBoxContainer" instance=ExtResource("2_no825")]
+[node name="Colors" parent="ScrollContainer/MarginContainer/Accordion" instance=ExtResource("2_no825")]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="MarginContainer" type="MarginContainer" parent="ScrollContainer/MarginContainer/VBoxContainer/ColorsPanel"]
+[node name="MarginContainer" type="MarginContainer" parent="ScrollContainer/MarginContainer/Accordion/Colors"]
 layout_mode = 2
 theme_override_constants/margin_left = 10
 theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 10
 
-[node name="color_vbox" type="VBoxContainer" parent="ScrollContainer/MarginContainer/VBoxContainer/ColorsPanel/MarginContainer"]
+[node name="color_vbox" type="VBoxContainer" parent="ScrollContainer/MarginContainer/Accordion/Colors/MarginContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/separation = 8
 
-[node name="Label" type="Label" parent="ScrollContainer/MarginContainer/VBoxContainer/ColorsPanel/MarginContainer/color_vbox"]
+[node name="Label" type="Label" parent="ScrollContainer/MarginContainer/Accordion/Colors/MarginContainer/color_vbox"]
+visible = false
 layout_mode = 2
 size_flags_vertical = 0
 text = "Colors"
 horizontal_alignment = 1
 
-[node name="color_preset_list" type="VBoxContainer" parent="ScrollContainer/MarginContainer/VBoxContainer/ColorsPanel/MarginContainer/color_vbox"]
+[node name="color_preset_list" type="VBoxContainer" parent="ScrollContainer/MarginContainer/Accordion/Colors/MarginContainer/color_vbox"]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="MarginContainer" type="MarginContainer" parent="ScrollContainer/MarginContainer/VBoxContainer/ColorsPanel/MarginContainer/color_vbox"]
+[node name="MarginContainer" type="MarginContainer" parent="ScrollContainer/MarginContainer/Accordion/Colors/MarginContainer/color_vbox"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="add_color_preset_button" type="Button" parent="ScrollContainer/MarginContainer/VBoxContainer/ColorsPanel/MarginContainer/color_vbox"]
+[node name="add_color_preset_button" type="Button" parent="ScrollContainer/MarginContainer/Accordion/Colors/MarginContainer/color_vbox"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 8
 text = "+"
 
-[node name="FontsPanel" parent="ScrollContainer/MarginContainer/VBoxContainer" instance=ExtResource("2_no825")]
+[node name="Fonts" parent="ScrollContainer/MarginContainer/Accordion" instance=ExtResource("2_no825")]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="MarginContainer" type="MarginContainer" parent="ScrollContainer/MarginContainer/VBoxContainer/FontsPanel"]
+[node name="MarginContainer" type="MarginContainer" parent="ScrollContainer/MarginContainer/Accordion/Fonts"]
 layout_mode = 2
 theme_override_constants/margin_left = 10
 theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 10
 
-[node name="font_vbox" type="VBoxContainer" parent="ScrollContainer/MarginContainer/VBoxContainer/FontsPanel/MarginContainer"]
+[node name="font_vbox" type="VBoxContainer" parent="ScrollContainer/MarginContainer/Accordion/Fonts/MarginContainer"]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="Label" type="Label" parent="ScrollContainer/MarginContainer/VBoxContainer/FontsPanel/MarginContainer/font_vbox"]
+[node name="Label" type="Label" parent="ScrollContainer/MarginContainer/Accordion/Fonts/MarginContainer/font_vbox"]
+visible = false
 layout_mode = 2
 size_flags_vertical = 0
 text = "Fonts"
 horizontal_alignment = 1
 
-[node name="font_preset_list" type="VBoxContainer" parent="ScrollContainer/MarginContainer/VBoxContainer/FontsPanel/MarginContainer/font_vbox"]
+[node name="font_preset_list" type="VBoxContainer" parent="ScrollContainer/MarginContainer/Accordion/Fonts/MarginContainer/font_vbox"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="add_font_preset_button" type="Button" parent="ScrollContainer/MarginContainer/VBoxContainer/FontsPanel/MarginContainer/font_vbox"]
+[node name="add_font_preset_button" type="Button" parent="ScrollContainer/MarginContainer/Accordion/Fonts/MarginContainer/font_vbox"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 8
 text = "+"
 
-[node name="NumbersPanel" parent="ScrollContainer/MarginContainer/VBoxContainer" instance=ExtResource("2_no825")]
+[node name="Numbers" parent="ScrollContainer/MarginContainer/Accordion" instance=ExtResource("2_no825")]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="MarginContainer" type="MarginContainer" parent="ScrollContainer/MarginContainer/VBoxContainer/NumbersPanel"]
+[node name="MarginContainer" type="MarginContainer" parent="ScrollContainer/MarginContainer/Accordion/Numbers"]
 layout_mode = 2
 theme_override_constants/margin_left = 10
 theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 10
 
-[node name="numbers_vbox" type="VBoxContainer" parent="ScrollContainer/MarginContainer/VBoxContainer/NumbersPanel/MarginContainer"]
+[node name="numbers_vbox" type="VBoxContainer" parent="ScrollContainer/MarginContainer/Accordion/Numbers/MarginContainer"]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="Label" type="Label" parent="ScrollContainer/MarginContainer/VBoxContainer/NumbersPanel/MarginContainer/numbers_vbox"]
+[node name="Label" type="Label" parent="ScrollContainer/MarginContainer/Accordion/Numbers/MarginContainer/numbers_vbox"]
+visible = false
 layout_mode = 2
 size_flags_vertical = 0
 text = "Numbers"
 horizontal_alignment = 1
 
-[node name="number_preset_list" type="VBoxContainer" parent="ScrollContainer/MarginContainer/VBoxContainer/NumbersPanel/MarginContainer/numbers_vbox"]
+[node name="number_preset_list" type="VBoxContainer" parent="ScrollContainer/MarginContainer/Accordion/Numbers/MarginContainer/numbers_vbox"]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="MarginContainer2" type="MarginContainer" parent="ScrollContainer/MarginContainer/VBoxContainer/NumbersPanel/MarginContainer/numbers_vbox"]
+[node name="MarginContainer2" type="MarginContainer" parent="ScrollContainer/MarginContainer/Accordion/Numbers/MarginContainer/numbers_vbox"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="add_number_preset_button" type="Button" parent="ScrollContainer/MarginContainer/VBoxContainer/NumbersPanel/MarginContainer/numbers_vbox"]
+[node name="add_number_preset_button" type="Button" parent="ScrollContainer/MarginContainer/Accordion/Numbers/MarginContainer/numbers_vbox"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 8
 text = "+"
 
-[node name="StyleboxesPanel" parent="ScrollContainer/MarginContainer/VBoxContainer" instance=ExtResource("2_no825")]
+[node name="Styleboxes" parent="ScrollContainer/MarginContainer/Accordion" instance=ExtResource("2_no825")]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="MarginContainer" type="MarginContainer" parent="ScrollContainer/MarginContainer/VBoxContainer/StyleboxesPanel"]
+[node name="MarginContainer" type="MarginContainer" parent="ScrollContainer/MarginContainer/Accordion/Styleboxes"]
 layout_mode = 2
 theme_override_constants/margin_left = 10
 theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 10
 
-[node name="styleboxes_vbox" type="VBoxContainer" parent="ScrollContainer/MarginContainer/VBoxContainer/StyleboxesPanel/MarginContainer"]
+[node name="styleboxes_vbox" type="VBoxContainer" parent="ScrollContainer/MarginContainer/Accordion/Styleboxes/MarginContainer"]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="Label" type="Label" parent="ScrollContainer/MarginContainer/VBoxContainer/StyleboxesPanel/MarginContainer/styleboxes_vbox"]
+[node name="Label" type="Label" parent="ScrollContainer/MarginContainer/Accordion/Styleboxes/MarginContainer/styleboxes_vbox"]
+visible = false
 layout_mode = 2
 size_flags_vertical = 0
 text = "Styleboxes"
 horizontal_alignment = 1
 
-[node name="stylebox_preset_list" type="VBoxContainer" parent="ScrollContainer/MarginContainer/VBoxContainer/StyleboxesPanel/MarginContainer/styleboxes_vbox"]
+[node name="stylebox_preset_list" type="VBoxContainer" parent="ScrollContainer/MarginContainer/Accordion/Styleboxes/MarginContainer/styleboxes_vbox"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/separation = 1
 
-[node name="MarginContainer2" type="MarginContainer" parent="ScrollContainer/MarginContainer/VBoxContainer/StyleboxesPanel/MarginContainer/styleboxes_vbox"]
+[node name="MarginContainer2" type="MarginContainer" parent="ScrollContainer/MarginContainer/Accordion/Styleboxes/MarginContainer/styleboxes_vbox"]
 visible = false
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="add_stylebox_preset_button" type="Button" parent="ScrollContainer/MarginContainer/VBoxContainer/StyleboxesPanel/MarginContainer/styleboxes_vbox"]
+[node name="add_stylebox_preset_button" type="Button" parent="ScrollContainer/MarginContainer/Accordion/Styleboxes/MarginContainer/styleboxes_vbox"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 8
 text = "+"
 
-[node name="TexturesPanel" parent="ScrollContainer/MarginContainer/VBoxContainer" instance=ExtResource("2_no825")]
+[node name="Textures" parent="ScrollContainer/MarginContainer/Accordion" instance=ExtResource("2_no825")]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="MarginContainer" type="MarginContainer" parent="ScrollContainer/MarginContainer/VBoxContainer/TexturesPanel"]
+[node name="MarginContainer" type="MarginContainer" parent="ScrollContainer/MarginContainer/Accordion/Textures"]
 layout_mode = 2
 theme_override_constants/margin_left = 10
 theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 10
 
-[node name="vbox" type="VBoxContainer" parent="ScrollContainer/MarginContainer/VBoxContainer/TexturesPanel/MarginContainer"]
+[node name="vbox" type="VBoxContainer" parent="ScrollContainer/MarginContainer/Accordion/Textures/MarginContainer"]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="Label" type="Label" parent="ScrollContainer/MarginContainer/VBoxContainer/TexturesPanel/MarginContainer/vbox"]
+[node name="Label" type="Label" parent="ScrollContainer/MarginContainer/Accordion/Textures/MarginContainer/vbox"]
+visible = false
 layout_mode = 2
 size_flags_vertical = 0
 text = "Textures"
 horizontal_alignment = 1
 
-[node name="textures_preset_list" type="VBoxContainer" parent="ScrollContainer/MarginContainer/VBoxContainer/TexturesPanel/MarginContainer/vbox"]
+[node name="textures_preset_list" type="VBoxContainer" parent="ScrollContainer/MarginContainer/Accordion/Textures/MarginContainer/vbox"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="add_textures_preset_button" type="Button" parent="ScrollContainer/MarginContainer/VBoxContainer/TexturesPanel/MarginContainer/vbox"]
+[node name="add_textures_preset_button" type="Button" parent="ScrollContainer/MarginContainer/Accordion/Textures/MarginContainer/vbox"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 8
 text = "+"
+
+[node name="VBoxContainer" type="HFlowContainer" parent="ScrollContainer/MarginContainer"]
+visible = false
+layout_mode = 2
+theme_override_constants/h_separation = 8
+theme_override_constants/v_separation = 8
 
 [node name="close_button" type="Button" parent="."]
 unique_name_in_owner = true

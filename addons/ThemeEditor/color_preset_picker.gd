@@ -7,24 +7,30 @@ signal remove_requested
 
 var preset_name:String
 var preset_color:Color
+var tweak_mode_only = false
 
 func _ready():	
-	%label.text = preset_name	
+	%preset_name.text = preset_name	
 	%picker.color = preset_color
 	%picker.color_changed.connect(func(color):		
 		color_changed.emit(color)
 	)
-	%label.text_submitted.connect(func(text):
-		rename_requested.emit(text)
-	)
-	%remove_preset_button.pressed.connect(func():
-		remove_requested.emit(preset_name)
-	)
-	
+	if not tweak_mode_only:		
+		%preset_name.text_submitted.connect(func(text):
+			rename_requested.emit(text)
+		)
+		%remove_preset_button.pressed.connect(func():
+			remove_requested.emit(preset_name)
+		)
+	else:
+		%remove_preset_button.queue_free()
+		%preset_name.editable = false
+		%preset_name.focus_mode = FOCUS_NONE
+		%preset_name.selecting_enabled = false
 
 func reset_name():
-	%label.text = preset_name
+	%preset_name.text = preset_name
 
 func disable():
-	%label.editable = false
+	%preset_name.editable = false
 	%picker.disabled = true
