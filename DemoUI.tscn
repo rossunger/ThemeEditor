@@ -99,7 +99,7 @@ text = "Play"
 [node name="Button2" type="Button" parent="VBoxContainer/CenterContainer/VBoxContainer/VBoxContainer"]
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
-theme_type_variation = &"button_outline_Button"
+theme_type_variation = &"button_menu_Button"
 text = "Options"
 
 [node name="Button3" type="Button" parent="VBoxContainer/CenterContainer/VBoxContainer/VBoxContainer"]
@@ -175,15 +175,15 @@ size_flags_horizontal = 4
 size_flags_vertical = 4
 
 [node name="CalendarDatePicker" parent="Control" instance=ExtResource("3_cfoqm")]
-custom_minimum_size = Vector2(200, 200)
+custom_minimum_size = Vector2(338, 271)
 layout_mode = 2
 anchors_preset = 0
 anchor_right = 0.0
 anchor_bottom = 0.0
 offset_left = -85.0
-offset_top = 36.0
-offset_right = 365.0
-offset_bottom = 236.0
+offset_top = 1.0
+offset_right = 253.0
+offset_bottom = 272.0
 theme_type_variation = &"calendar_red"
 
 [node name="InputOtp" parent="Control" instance=ExtResource("2_cfoqm")]

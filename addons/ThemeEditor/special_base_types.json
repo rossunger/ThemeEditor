@@ -1,0 +1,97 @@
+{
+    "Accordion": {
+        "Button": [
+            "button"
+        ],
+        "VBoxContainer": [
+            ""
+        ]
+    },
+    "CalendarDatePicker": {
+        "PanelContainer": [
+            ""
+        ],
+        "Button": [
+            "calendar_day",
+            "calendar_day_selected",
+            "calendar_day_blank"
+        ],
+        "SpinBoxExtra": [
+            "years_spinbox"
+        ]
+    },
+    "Carousel": {
+        "PanelContainer": [
+            ""
+        ],
+        "Button": [
+            "nav_buttons",
+            "dots_buttons",
+            "hbox"
+        ]
+    },
+    "InputOTP": {
+        "HBoxContainer": [
+            ""
+        ],
+        "LineEdit": [
+            "line_edit"
+        ]
+    },
+    "Pagination": {
+        "Button": [
+            "navigation_button",
+            "page_button"
+        ],
+        "PanelContainer": [
+            ""
+        ],
+        "HBoxContainer": [
+            "hbox"
+        ],
+    },
+    "SpinBoxExtra": {
+        "PanelContainer": [
+            ""
+        ],
+        "Label": [
+            "spinbox_label"
+        ],
+        "SpinBoxButtons": [
+            "spinbox_buttons_control"
+        ]
+    },
+    "SpinBoxButtons": {
+        "MarginContainer": [
+            ""
+        ],
+        "VBoxContainer": [
+            "vbox"
+        ],
+        "Button": [
+            "up_button",
+            "down_button"
+        ]
+    },
+    "OptionButtonSpinBox": {
+        "Control": [
+            ""
+        ],
+        "Button": [
+            "scroll_buttons",
+            "toggle_button",
+            "button",
+            "option_heading_button",
+            "option_button"
+        ],
+        "Panel": [
+            "panel"
+        ],
+        "VBoxContainer": [
+            "options_vbox"
+        ],
+        "LineEdit": [
+            "search"
+        ]
+    }
+}

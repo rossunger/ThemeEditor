@@ -16,7 +16,8 @@ var control_list = []
 var fav_controls_list = "PanelContainer,Label,Button,Panel,CheckBox,CheckButton,TextureRect,ColorRect,NinePatchRect,HSeparator,VSeparator,ItemList,LineEdit,Tree,HSlider,VSlider,SpinBox,OptionButton,HSplitContainer,VSplitContainer".split(',')
 var container_list = "HBoxContainer,VBoxContainer,ScrollContainer,HFlowContainer,VFlowContainer,MarginContainer,GridContainer,Container,AspectRatioContainer,TabContainer,BoxContainer,CenterContainer,FlowContainer,SubViewportContainer,SplitContainer".split(',')
 var other_controls_list = "Range,ScrollBar,HScrollBar,VScrollBar,Slider,LinkButton,ReferenceRect,TabBar,Separator,HSeparator,VSeparator,ProgressBar,TextureProgressBar,VideoStreamPlayer,TextEdit,CodeEdit,MenuBar,MenuButton,ColorPicker,ColorPickerButton,RichTextLabel,GraphElement,GraphNode,GraphFrame,GraphEdit".split(',')
-var special_controls_list = "Accordion,CalendarDatePicker,Pagination,SpinBoxExtra,SpinBoxButtons,OptionButtonSpinBox".split(',')
+var special_controls_info = JSON.parse_string( FileAccess.get_file_as_string("res://addons/ThemeEditor/special_base_types.json"))
+var special_controls_list = PackedStringArray(special_controls_info.keys()) # "Accordion,CalendarDatePicker,Pagination,SpinBoxExtra,SpinBoxButtons,OptionButtonSpinBox".split(',')
 
 ##TREE BUTTON ICONS
 var close_icon = preload("icon_close.svg")
@@ -74,7 +75,12 @@ func init_tree_signals():
 	class_list_tree.item_edited.connect(class_list_edited)
 	class_list_tree.button_clicked.connect( class_list_button_clicked )
 	
-	class_list_tree.item_activated.connect(	class_list_tree.edit_selected.bind(true))
+	class_list_tree.item_activated.connect(func():		
+		if class_list_tree.get_selected_column() == 0:
+			class_list_tree.edit_selected(true)
+		else:
+			show_change_base_type_dialog(class_list_tree.get_selected())
+	)
 	class_list_tree.item_selected.connect( build_details_tree )
 	class_list_tree.nothing_selected.connect( details_tree.clear )	
 	details_tree.item_edited.connect(detail_edited)
@@ -307,8 +313,8 @@ func detail_edited(specific_item:TreeItem = null):
 			else:		
 				item.set_text(0, str(prop, " ", presets.numbers[list[i]] ))		
 		item.set_tooltip_text(1, list[i])					
-		var sub_type = item.get_parent().get_metadata(0)
-		var is_special = sub_type is String
+		var sub_type = item.get_parent().get_text(0)
+		var is_special = presets.classes[original_type].has(sub_type)
 		if is_special:					
 			presets.classes[original_type][sub_type][prop] = list[i]			
 		else:
@@ -324,14 +330,13 @@ func detail_edited(specific_item:TreeItem = null):
 			var type_list = current_theme.get_type_list()
 			current_theme.set_block_signals(true)
 			if is_special:				
-				var base_type = presets.classes[original_type][sub_type]["base_type"][0]
-				var type = get_resolved_type(original_type,sub_type)					
-				if not type in type_list:
-					current_theme.add_type(type)			
-				if not current_theme.is_type_variation(type, base_type):
-					current_theme.set_type_variation(type,base_type)		
+				var base_type = presets.classes[original_type][sub_type]["base_type"][0]				
+				if not sub_type in type_list:
+					current_theme.add_type(sub_type)			
+				if not current_theme.is_type_variation(sub_type, base_type):
+					current_theme.set_type_variation(sub_type,base_type)		
 				var preset_name = presets.classes[original_type][sub_type][prop]
-				apply_prop_to_theme(current_theme, type, prop, base_type, preset_name, extra_node_properties)				
+				apply_prop_to_theme(current_theme, sub_type, prop, base_type, preset_name, extra_node_properties)				
 			else:
 				for base_type in presets.classes[original_type]["base_type"]:					
 					var type = get_resolved_type(original_type,base_type)				
@@ -358,45 +363,59 @@ func detail_edited(specific_item:TreeItem = null):
 			if not details_tree_prop_nodes.has(list[i]):
 				details_tree_prop_nodes[list[i]] = []
 			details_tree_prop_nodes[list[i]].push_back(specific_item)
-	
-func validate_special_type(original_type, special_base_type):	
-	for sub_type in presets.classes[original_type].keys():
-		if sub_type == "base_type": continue
-		if not presets.classes[original_type][sub_type] is Dictionary: 		
-			presets.classes[original_type].erase(sub_type)
-	for base_type in default_props[special_base_type]:		
-		for sub_type in default_props[special_base_type][base_type]:						
-			if not presets.classes[original_type].has(sub_type):				
-				presets.classes[original_type][sub_type] = {"base_type":[base_type]}
-				for prop in default_props[base_type]:
-					presets.classes[original_type][sub_type][prop] = "default"
-					
 
-func build_special_details_tree(original_type, special_base_type):
-	validate_special_type(original_type, special_base_type)
-	var root := details_tree.create_item()				
-	#for type in get_resolved_types(original_type, special_base_type):			
-	for sub_base_type in default_props[special_base_type].keys():			
-		for sub_type_suffix in default_props[special_base_type][sub_base_type]:
-			var base_item = root.create_child()			
-			var sub_type = get_resolved_type(original_type,sub_type_suffix)
-			base_item.set_text(0, sub_type)		
-			base_item.set_metadata(0, sub_type_suffix)					
-			for prop in default_props[sub_base_type]:				
-				var prop_item = base_item.create_child()						
-				var preset_name = presets.classes[original_type][sub_type_suffix][prop] if presets.classes[original_type][sub_type_suffix].has(prop) else "default"				
-				update_detail_tree_prop_item_ui(prop_item, prop, preset_name)
-	
+func process_special_type_recursive(root_key: String, current_prefix: String, special_type: String):	
+	if not presets.classes.has(root_key):
+		presets.classes[root_key] = {}
+	# Add the base_type and default props for this component
+	if not presets.classes[root_key].has(current_prefix):
+		presets.classes[root_key][current_prefix] = {	"base_type": [special_type]		}
+		for prop in default_props.get(special_type, []):
+			presets.classes[root_key][current_prefix][prop] = "default"
+	# Override base_type if special_type declares "" under another base_type
+	for alt_base_type in special_controls_info.get(special_type, {}):
+		var sub_types = special_controls_info[special_type][alt_base_type]
+		if "" in sub_types:
+			presets.classes[root_key][current_prefix]["base_type"] = [alt_base_type]
+			for prop in default_props.get(alt_base_type, []):
+				presets.classes[root_key][current_prefix][prop] = "default"
+	# Skip if no subcontrols
+	if not special_controls_info.has(special_type):
+		return
+	# Process children
+	for base_type in special_controls_info[special_type]:		
+		for sub_type in special_controls_info[special_type][base_type]:
+			if sub_type == "":
+				continue  # Root already handled
+			var new_prefix = current_prefix + "_" + sub_type
+			if base_type in special_controls_info:			
+				process_special_type_recursive(root_key, new_prefix, base_type)
+			else:				
+				presets.classes[root_key][new_prefix] = {"base_type": [base_type]}
+				for prop in default_props.get(base_type, []):
+					presets.classes[root_key][new_prefix][prop] = "default"
+								
 func build_details_tree():
 	details_tree.clear()
 	details_tree_prop_nodes.clear()	
 	var item = class_list_tree.get_selected()	
 	if not item: return	
 	var type = item.get_text(0) # class name
-	var base_types = presets.classes[type].base_type
-	if len(base_types) and base_types[0] in special_controls_list:
-		build_special_details_tree(type, base_types[0])
-		return	
+	var base_types = presets.classes[type].base_type	
+	if len(base_types)==1 and base_types[0] in special_controls_list:
+		process_special_type_recursive(type, type, presets.classes[type]["base_type"][0])
+		var root := details_tree.create_item()						
+		for sub_type_or_prop in presets.classes[type]:
+			if sub_type_or_prop == "base_type": continue
+			var base_item = root.create_child()			
+			if presets.classes[type][sub_type_or_prop] is Dictionary:								
+				base_item.set_text(0, sub_type_or_prop)		
+				base_item.set_metadata(0, sub_type_or_prop)					
+				for prop in default_props[presets.classes[type][sub_type_or_prop]["base_type"][0] ]:				
+					var prop_item = base_item.create_child()						
+					var preset_name = presets.classes[type][sub_type_or_prop][prop] if presets.classes[type][sub_type_or_prop].has(prop) else "default"				
+					update_detail_tree_prop_item_ui(prop_item, prop, preset_name)			
+		return		
 	var root := details_tree.create_item()				
 	var active_root = root.create_child()
 	details_tree_nodes["active"] = active_root
@@ -422,7 +441,7 @@ func build_details_tree():
 		prop_item.set_metadata(1, preset_name)
 	var available_props = []	
 	var not_available_all_props = []
-	var all_props = presets.classes[type].keys()	
+	var all_props = presets.classes[type].keys()		
 	for base_type in base_types:			
 		for prop in default_props[base_type]:
 			if not prop in available_props:
@@ -430,11 +449,13 @@ func build_details_tree():
 			if not prop in all_props:
 				all_props.push_back(prop)		
 							
-	for base_type in presets.classes[type].base_type:		
+	for base_type in base_types:		
 		for prop in available_props:
 			if prop in not_available_all_props: continue
 			if base_type in special_controls_list: 
-				for base_base_type in default_props[base_type].keys():					
+				#THIS SHOULD NEVER HAPPEN.... special types covered earlier... and you can't mix special type and base types
+				push_error("Special theme type mixed with base type! this should never happen: ", base_type)
+				for base_base_type in special_controls_info[base_type].keys():					
 					if not prop in default_props[base_base_type]:
 						not_available_all_props.push_back(prop)		
 			elif not prop in default_props[base_type]:
@@ -442,7 +463,7 @@ func build_details_tree():
 	
 	for prop in all_props:	
 		if prop == "base_type": continue
-		var preset_name = presets.classes[type][prop] if presets.classes[type].has(prop) else "default"
+		var preset_name = presets.classes[type][prop] if presets.classes[type].has(prop) else "default"		
 		var prop_item:TreeItem
 		if preset_name != "default":
 			if prop in available_props:
@@ -554,22 +575,25 @@ func class_list_button_clicked(item: TreeItem, column: int, id: int, mouse_butto
 			presets.classes.erase(item.get_text(0))			
 			build_tree()
 	elif column == 1: # change base types
-		var popup := Window.new()		
-		var node = preload("base_type_selector.tscn").instantiate()
-		node.type_list = control_list
-		node.special_type_list = special_controls_list
-		var type = item.get_text(0)
-		node.initial_selection = presets.classes[type].base_type
-		popup.add_child(node)
-		add_child(popup)
-		popup.popup_centered()
-		popup.close_requested.connect(popup.queue_free)		
-		node.confirmed.connect(func(list):
-			presets.classes[type].base_type = list
-			update_ui_type_base_classes(item, presets.classes[type].base_type)				
-		)
-		popup.wrap_controls = true		
-		
+		show_change_base_type_dialog(item)
+
+func show_change_base_type_dialog(item):
+	var popup := Window.new()		
+	var node = preload("base_type_selector.tscn").instantiate()
+	node.type_list = control_list
+	node.special_type_list = special_controls_list
+	var type = item.get_text(0)
+	node.initial_selection = presets.classes[type].base_type
+	popup.add_child(node)
+	add_child(popup)
+	popup.popup_centered()
+	popup.close_requested.connect(popup.queue_free)		
+	node.confirmed.connect(func(list):
+		presets.classes[type].base_type = list
+		update_ui_type_base_classes(item, presets.classes[type].base_type)				
+	)
+	popup.wrap_controls = true		
+	
 func build_tree():
 	class_list_tree.clear()
 	details_tree.clear()
@@ -600,26 +624,24 @@ func update_ui_type_base_classes(tree_item, list):
 func apply_variable_to_theme(category, preset_name):		
 	current_theme.set_block_signals(true)
 	var extra_node_properties = {}
-	for type in presets.classes.keys():
-		if len(presets.classes[type].base_type)==1 and presets.classes[type].base_type[0] in special_controls_list:
-			for sub_type in presets.classes[type].keys():
-				if sub_type == "base_type": continue
-				for prop in presets.classes[type][sub_type].keys():
+	for type in presets.classes.keys():				
+		for prop_or_subtype in presets.classes[type].keys():				
+			if prop_or_subtype == "base_type": continue
+			if len(presets.classes[type].base_type)==1 and presets.classes[type].base_type[0] in special_controls_list:				
+				var sub_type = prop_or_subtype				
+				for prop in presets.classes[type][sub_type]:														
 					if prop == "base_type": continue
-					#if prop == "is_texture": continue
-					if not presets.classes[type].has(sub_type):
-						print("NO SUBYPE ", type, ":", sub_type)
-					if not presets.classes[type][sub_type].has(prop):
-						print(" no prop: ", type, sub_type, ": ", prop)												
-					if presets.classes[type][sub_type][prop] == preset_name:												
-						apply_prop_to_theme(current_theme, get_resolved_type(type, sub_type), prop, presets.classes[type][sub_type].base_type[0], preset_name, extra_node_properties)	
+					if prop == "is_texture": continue					
+					if presets.classes[type][sub_type][prop] == preset_name:					
+						var base_type = presets.classes[type][sub_type].base_type[0]						
+						apply_prop_to_theme(current_theme, sub_type, prop, base_type, preset_name, extra_node_properties)	
 						if not details_tree_prop_nodes.has(preset_name): continue
 						for prop_item in details_tree_prop_nodes[preset_name]:
-							detail_edited(prop_item)
-		else:
-			for prop in presets.classes[type].keys():				
+							detail_edited(prop_item)					
+			else:							
+				var prop = prop_or_subtype
 				if prop == "base_type": continue
-				if prop == "is_texture": continue
+				if prop == "is_texture": continue				
 				if presets.classes[type][prop] == preset_name:					
 					for base_type in presets.classes[type].base_type:						
 						apply_prop_to_theme(current_theme, get_resolved_type(type, base_type), prop, base_type, preset_name, extra_node_properties)	
@@ -720,43 +742,45 @@ func apply_prop_to_theme(the_theme: Theme, type:String, prop:String, base_type:S
 			the_theme.set_constant(prop, type, value)
 		
 
-func get_resolved_type(type,base_type):
-	return type +"_"+base_type if not base_type.is_empty() else type	
+func get_resolved_type(type:String,base_type:String)->String:
+	if base_type.is_empty(): return type
+	if type.is_empty(): return base_type
+	return type +"_"+base_type
 	
 func apply_all_to_theme(the_theme = current_theme):			
 	var type_list = the_theme.get_type_list() 
 	var extra_node_properties = {}
 	the_theme.set_block_signals(true)
-	for original_type in presets.classes.keys():
-		if len(presets.classes[original_type].base_type) == 1 and presets.classes[original_type].base_type[0] in special_controls_list:				
-			for sub_type in presets.classes[original_type].keys():
-				if sub_type == "base_type": continue
-				if not presets.classes[original_type][sub_type] is Dictionary:
-					continue				
-				var base_type = presets.classes[original_type][sub_type]["base_type"][0]
-				var type = get_resolved_type(original_type,sub_type)					
-				if not type in type_list:
-					the_theme.add_type(type)
-				type_list.remove_at(type_list.find(type))		
-				if not the_theme.is_type_variation(type, base_type):
-					the_theme.set_type_variation(type,base_type)
+	for original_type in presets.classes.keys():		
+		for sub_type in presets.classes[original_type].keys():
+			if presets.classes[original_type][sub_type] is Dictionary: 				
+				var base_type = presets.classes[original_type][sub_type]["base_type"][0]				
+				if not sub_type in type_list:
+					the_theme.add_type(sub_type)				
+				else:
+					type_list.remove_at(type_list.find(sub_type))		
+				if not the_theme.is_type_variation(sub_type, base_type):
+					the_theme.set_type_variation(sub_type,base_type)
 				for prop in presets.classes[original_type][sub_type].keys():		
 					if prop == "base_type":continue
 					var preset_name = presets.classes[original_type][sub_type][prop]
-					apply_prop_to_theme(the_theme, type, prop, base_type, preset_name, {})				
-		else:				
-			for base_type in presets.classes[original_type]["base_type"]:									
-				var type = get_resolved_type(original_type,base_type)				
-				if not type in type_list:
-					the_theme.add_type(type)
-				else:						
-					type_list.remove_at(type_list.find(type))				
-				if not the_theme.is_type_variation(type, base_type):
-					the_theme.set_type_variation(type,base_type)											
-				for prop in presets.classes[original_type].keys():					
-					if prop == "base_type": continue					
-					var preset_name = presets.classes[original_type][prop]											
-					apply_prop_to_theme(the_theme, type, prop, base_type, preset_name, extra_node_properties)				
+					apply_prop_to_theme(the_theme, sub_type, prop, base_type, preset_name, {})				
+			else:		
+				if sub_type == "base_type":continue							
+				for base_type in presets.classes[original_type]["base_type"]:									
+					var type = get_resolved_type(original_type,base_type)				
+					if not type in type_list:
+						the_theme.add_type(type)
+					else:						
+						type_list.remove_at(type_list.find(type))				
+					if not the_theme.is_type_variation(type, base_type):
+						the_theme.set_type_variation(type,base_type)											
+					for prop in presets.classes[original_type].keys():					
+						if prop == "base_type": continue					
+						var preset_name = presets.classes[original_type][prop]		
+						if preset_name is Dictionary:
+							print(original_type, prop)									
+						apply_prop_to_theme(the_theme, type, prop, base_type, preset_name, extra_node_properties)				
 	for type in type_list:
 		the_theme.remove_type(type)
 	the_theme.set_block_signals(false)		
