@@ -9,6 +9,10 @@ signal theme_loaded
 
 @onready var class_list_tree:Tree = %class_list_tree
 @onready var details_tree:Tree = %details_tree
+@onready var class_list_search = %class_list_search
+@onready var prop_list_search = %prop_list_search
+@onready var variable_list_search = %variable_list_search
+
 var details_tree_nodes = {}
 var details_tree_prop_nodes = {}
 
@@ -35,13 +39,13 @@ var styleboxes = {}
 var presets = {"colors":{}, "numbers":{}, "styleboxes":{}, "fonts":{}, "textures":{}, "classes":{}}
 
 var preset_manager = null
-var tweak_only_mode = false: 
+var tweak_mode_only = false: 
 	set(val):
-		if tweak_only_mode == val: return
-		tweak_only_mode = val		
-		%new_theme_button.visible = not tweak_only_mode
-		%add_class_button.visible = not tweak_only_mode
-		if tweak_only_mode:
+		if tweak_mode_only == val: return
+		tweak_mode_only = val		
+		%new_theme_button.visible = not tweak_mode_only
+		%add_class_button.visible = not tweak_mode_only
+		if tweak_mode_only:
 			var root = class_list_tree.get_root()
 			if not root: return
 			for item:TreeItem in class_list_tree.get_root().get_children():
@@ -84,6 +88,13 @@ func init_tree_signals():
 	class_list_tree.item_selected.connect( build_details_tree )
 	class_list_tree.nothing_selected.connect( details_tree.clear )	
 	details_tree.item_edited.connect(detail_edited)
+	details_tree.button_clicked.connect(func(item: TreeItem, column: int, id: int, mouse_button_index: int):
+		for child in item.get_children():
+			var prop = child.get_text(0)
+			var type = class_list_tree.get_selected().get_text(0)
+			presets.classes[type].erase(prop)		
+		item.get_parent().erase(item)
+	)
 	
 func init_examples():
 	for child in %example.get_children():
@@ -125,6 +136,31 @@ func _ready():
 	if debug: 
 		load_theme.call_deferred(default_theme_path)
 	%examples_split_container.visible = debug
+	class_list_search.text_changed.connect(filter_class_list)
+	prop_list_search.text_changed.connect(filter_prop_list)
+	variable_list_search.text_changed.connect(filter_variable_list)
+	
+func filter_class_list(text):
+	for child in class_list_tree.get_root().get_children():
+		child.visible = child.get_text(0).containsn(text) or text.is_empty()
+
+func filter_prop_list(text):	
+	for category in details_tree.get_root().get_children():
+		var category_visible = false
+		for child in category.get_children():
+			child.visible = child.get_text(0).containsn(text) or text.is_empty()
+			if child.visible:
+				category_visible = true
+		category.visible = category_visible or category.get_text(0).containsn(text) or text.is_empty()
+		if category.visible and category.get_text(0).containsn(text):
+			for child in category.get_children():
+				child.visible = true
+
+func filter_variable_list(text):
+	for key in details_tree_prop_nodes:		
+		for child in details_tree_prop_nodes[key]:		
+			child.visible = key.containsn(text) or text.is_empty()
+
 	
 func show_new_theme_dialog():
 	var dialog := FileDialog.new()	
@@ -429,13 +465,16 @@ func build_details_tree():
 	var invalid_root = root.create_child()
 	details_tree_nodes["invalid"] = invalid_root
 	invalid_root.set_text(0, "Invalid")
+	invalid_root.add_button(0, close_icon, 0, false, "remove invalid")
 	for prop in extra_node_property_names.common:		
 		var prop_item := available_all_root.create_child()
 		prop_item.set_text(0, prop)
 		prop_item.set_metadata(0, prop)
 		prop_item.set_cell_mode(1,TreeItem.CELL_MODE_RANGE)
-		prop_item.set_editable(1, true)		
-		prop_item.set_text(1, ",".join(presets.numbers.keys()).replace("default", " ") )			
+		prop_item.set_editable(1, true)	
+		var options	= presets.numbers.keys()
+		options.erase("default")
+		prop_item.set_text(1, " ," + ",".join(options))
 		var preset_name = presets.classes[type][prop] if presets.classes[type].has(prop) else "default"		
 		prop_item.set_range(1, presets.numbers.keys().find(preset_name.replace(" ", "default")) )				
 		prop_item.set_metadata(1, preset_name)
@@ -471,6 +510,7 @@ func build_details_tree():
 				available_props.erase(prop)
 			else:
 				prop_item = invalid_root.create_child()
+				
 				available_props.erase(prop)
 		else:					
 			if prop in available_props:
@@ -497,26 +537,35 @@ func update_detail_tree_prop_item_ui(prop_item, prop, preset_name):
 	prop_item.set_editable(1, true)
 	prop_item.set_metadata(1, preset_name)
 	if "color" in prop:			
-		prop_item.set_text(1, ",".join(presets.colors.keys()).replace("default", " "))			
-		var value = presets.colors[ preset_name ]			
+		var options = presets.colors.keys()
+		options.erase("default")		
+		prop_item.set_text(1, " ," + ",".join(options))			
+		var value = presets.colors[ preset_name ] if  presets.colors.has(preset_name) else "default"
 		if preset_name == "default":
 			prop_item.set_icon(0, null)
 		else:
 			prop_item.set_icon(0,get_color_as_image(value))				
 		prop_item.set_range(1, presets.colors.keys().find(preset_name.replace(" ", "default")) )						
 	elif prop.begins_with("stylebox_"):			
-		prop_item.set_text(1, ",".join(presets.styleboxes.keys()).replace("default", " "))										
+		var options = presets.styleboxes.keys()
+		options.erase("default")
+		prop_item.set_text(1, " ," + ",".join(options))										
 		prop_item.set_range(1, presets.styleboxes.keys().find(preset_name.replace(" ", "default")) )
 	elif prop == "font":						
-		prop_item.set_text(1, ",".join(presets.fonts.keys()).replace("default", " "))			
+		var options = presets.fonts.keys()
+		options.erase("default")
+		prop_item.set_text(1," ," + ",".join(options))
 		prop_item.set_range(1, presets.fonts.keys().find(preset_name.replace(" ", "default")) )			
 	elif prop.begins_with("texture_"):			
-		prop_item.set_text(1, ",".join(presets.textures.keys()).replace("default", " ") )										
+		var options = presets.textures.keys()
+		options.erase("default")
+		prop_item.set_text(1, " ," + ",".join(options))
 		prop_item.set_range(1, presets.textures.keys().find(preset_name.replace(" ", "default")) )				
 	else:			
-		prop_item.set_text(1, ",".join(presets.numbers.keys()).replace("default", " ") )			
+		var options = presets.numbers.keys()
+		options.erase("default")
+		prop_item.set_text(1, " ," + ",".join(options))
 		prop_item.set_range(1, presets.numbers.keys().find(preset_name.replace(" ", "default")) )				
-
 			
 func add_class():
 	var type = "new_class"
@@ -606,7 +655,7 @@ func build_tree():
 		tree_item.set_text(0, type)
 		tree_item.set_metadata(0, type)
 		#tree_item.set_editable(0, true)
-		if not tweak_only_mode:		
+		if not tweak_mode_only:		
 			tree_item.add_button(0,duplicate_icon, 0,false, "Duplicate")
 			tree_item.add_button(0,close_icon, 1,false, "Remove")
 			tree_item.add_button(1, edit_icon, 0, false, "edit base types")	
@@ -700,7 +749,7 @@ func apply_prop_to_theme(the_theme: Theme, type:String, prop:String, base_type:S
 					styleboxes[preset_name] = StyleBoxTexture.new()									
 			else:
 				if not styleboxes.has(preset_name) or not styleboxes[preset_name] is StyleBoxFlat:								
-					styleboxes[preset_name] = StyleBoxFlat.new()									
+					styleboxes[preset_name] = StyleBoxFlat.new()												
 			update_stylebox(preset_name)																	
 			the_theme.set_stylebox(prop.trim_prefix("stylebox_"), type, styleboxes[preset_name])
 		return
@@ -777,9 +826,7 @@ func apply_all_to_theme(the_theme = current_theme):
 						the_theme.set_type_variation(type,base_type)											
 					for prop in presets.classes[original_type].keys():					
 						if prop == "base_type": continue					
-						var preset_name = presets.classes[original_type][prop]		
-						if preset_name is Dictionary:
-							print(original_type, prop)									
+						var preset_name = presets.classes[original_type][prop]								
 						apply_prop_to_theme(the_theme, type, prop, base_type, preset_name, extra_node_properties)				
 	for type in type_list:
 		the_theme.remove_type(type)
@@ -872,8 +919,8 @@ func update_stylebox(stylebox_preset_name):
 		var s:StyleBoxFlat = styleboxes[stylebox_preset_name]
 		var data = presets.styleboxes[stylebox_preset_name]
 		s.bg_color = default_stylebox_color if data.background_color == "default" else presets.colors[data.background_color]		
-		s.skew.x = 0 if data.background_skew_x == "default" else presets.numbers[data.background_skew_x]	
-		s.skew.y = 0 if data.background_skew_y == "default" else presets.numbers[data.background_skew_y]	
+		s.skew.x = 0 if not data.has("background_skew_x") or data.background_skew_x == "default" else presets.numbers[data.background_skew_x]	
+		s.skew.y = 0 if not data.has("background_skew_y") or data.background_skew_y == "default" else presets.numbers[data.background_skew_y]	
 		s.draw_center = true if data.background_enabled == "default" else true if presets.numbers[data.background_enabled] != 0 else false
 		
 		s.border_color = Color() if data.border_color == "default" else presets.colors[data.border_color]
@@ -881,18 +928,18 @@ func update_stylebox(stylebox_preset_name):
 		s.border_width_top = 0 if data.border_top == "default" else presets.numbers[data.border_top]	
 		s.border_width_right = 0 if data.border_right == "default" else presets.numbers[data.border_top]	
 		s.border_width_bottom = 0 if data.border_bottom == "default" else presets.numbers[data.border_top]	
-		s.border_blend = false if data.border_bottom == "default" else true if presets.numbers[data.border_blend] != 0 else false
+		s.border_blend = false if not data.has("border_blend") or data.border_blend == "default" else true if presets.numbers[data.border_blend] != 0 else false
 		
 		s.corner_radius_top_left = 8 if data.corners_top_left == "default" else presets.numbers[data.corners_top_left]
 		s.corner_radius_top_right = 8 if data.corners_top_right == "default" else presets.numbers[data.corners_top_right]
 		s.corner_radius_bottom_right = 8 if data.corners_bottom_right == "default" else presets.numbers[data.corners_bottom_right]
 		s.corner_radius_bottom_left = 8 if data.corners_bottom_left == "default" else presets.numbers[data.corners_bottom_left]		
-		s.corner_detail = 8 if data.corners_detail == "default" else presets.numbers[data.corners_detail]
+		s.corner_detail = 8 if not data.has("corners_detail") or data.corners_detail == "default" else presets.numbers[data.corners_detail]
 		
-		s.content_margin_left = 0 if data.margins_left == "default" else presets.numbers[data.margins_left]
-		s.content_margin_top = 0 if data.margins_top == "default" else presets.numbers[data.margins_top]
-		s.content_margin_right = 0 if data.margins_right == "default" else presets.numbers[data.margins_right]
-		s.content_margin_bottom = 0 if data.margins_bottom == "default" else presets.numbers[data.margins_bottom]
+		s.content_margin_left = 0 if not data.has("margins_left") or data.margins_left == "default" else presets.numbers[data.margins_left]
+		s.content_margin_top = 0 if not data.has("margins_top") or data.margins_top == "default" else presets.numbers[data.margins_top]
+		s.content_margin_right = 0 if not data.has("margins_right") or data.margins_right == "default" else presets.numbers[data.margins_right]
+		s.content_margin_bottom = 0 if not data.has("margins_bottom") or data.margins_bottom  == "default" else presets.numbers[data.margins_bottom]
 		
 		s.shadow_color = Color(0,0,0,0.5) if data.shadow_color == "default" else presets.colors[data.shadow_color]
 		s.shadow_size = 0 if data.shadow_size == "default" else presets.numbers[data.shadow_size]

@@ -31,7 +31,30 @@ func _ready():
 		%add_stylebox_preset_button.visible = false
 		%add_font_preset_button.visible = false
 		%add_textures_preset_button.visible = false
+		
+	%colors_search.text_changed.connect(do_search.bind("colors"))	
+	%fonts_search.text_changed.connect(do_search.bind("fonts"))
+	%numbers_search.text_changed.connect(do_search.bind("numbers"))
+	%styleboxes_search.text_changed.connect(do_search.bind("styleboxes"))
+	%textures_search.text_changed.connect(do_search.bind("presets"))
 
+func do_search(text, category):
+	if category == "colors":
+		for child in %color_preset_list.get_children():
+			child.visible = child.preset_name.containsn(text) or text.is_empty()
+	elif category == "fonts":
+		for child in %font_preset_list.get_children():
+			child.visible = child.preset_name.containsn(text) or text.is_empty()
+	elif category == "numbers":
+		for child in %number_preset_list.get_children():
+			child.visible = child.preset_name.containsn(text) or text.is_empty()
+	if category == "styleboxes":
+		for child in %stylebox_preset_list.get_children():
+			child.visible = child.preset_name.containsn(text) or text.is_empty()
+	if category == "presets":
+		for child in %textures_preset_list.get_children():
+			child.visible = child.preset_name.containsn(text) or text.is_empty()
+			
 func add_stylebox_preset():
 	var i = 0
 	var new_name = "new_stylebox"
@@ -250,7 +273,7 @@ func clear_preset_ui():
 		
 func load_presets(_theme_path = null):
 	clear_preset_ui()		
-	var keys = presets.colors.keys()
+	var keys: Array = presets.colors.keys()
 	keys.sort()
 	for key in keys:			
 		add_color_preset_ui(key)
@@ -259,12 +282,15 @@ func load_presets(_theme_path = null):
 	for key in keys:			
 		add_number_preset_ui(key)
 	keys = presets.styleboxes.keys()
+	keys.sort()
 	for key in keys:			
 		add_stylebox_preset_ui(key)
 	keys = presets.fonts.keys()
+	keys.sort()
 	for key in keys:			
 		add_font_preset_ui(key)	
 	keys = presets.textures.keys()
+	keys.sort()
 	for key in keys:			
 		add_texture_preset_ui(key)
 	#if _theme_path != null:

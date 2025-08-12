@@ -101,13 +101,13 @@ func build_tree():
 					item.set_text(1, ",".join(presets.colors.keys()))					
 					var value = presets.styleboxes[preset_name][category+"_"+prop]
 					
-					if presets.colors[value] is Color:
+					if not value == "default" and presets.colors[value] is Color:
 						item.set_icon(0, get_color_as_image(presets.colors[value]))						
 					item.set_range(1, presets.colors.keys().find(value))					
 				else:					
 					item.set_metadata(1, presets.numbers.keys())				
 					item.set_text(1, ",".join(presets.numbers.keys()))
-					var value = presets.styleboxes[preset_name][category+"_"+prop]
+					var value = presets.styleboxes[preset_name][category+"_"+prop] if presets.styleboxes[preset_name].has(category+"_"+prop) else "default"
 					item.set_range(1, presets.numbers.keys().find(value))
 	else:
 		for category in texture_props.keys():

@@ -1,15 +1,16 @@
-[gd_scene load_steps=11 format=3 uid="uid://cb1a2dmfj7oea"]
+[gd_scene load_steps=12 format=3 uid="uid://cb1a2dmfj7oea"]
 
 [ext_resource type="Script" uid="uid://bifah2vpggnhm" path="res://addons/ThemeEditor/theme_editor.gd" id="1_rfxdj"]
 [ext_resource type="Texture2D" uid="uid://do53psudsfxxr" path="res://addons/ThemeEditor/icon_open.svg" id="2_ddoil"]
 [ext_resource type="Texture2D" uid="uid://cwfnrgg5e68jr" path="res://addons/ThemeEditor/icon_add.svg" id="3_mw4ys"]
 [ext_resource type="Texture2D" uid="uid://bqjyj8pe4su7t" path="res://addons/ThemeEditor/icon_settings.svg" id="4_km1hr"]
 [ext_resource type="Theme" uid="uid://d0vyg4i1pxmxl" path="res://addons/ThemeEditor/default_theme.theme" id="5_m3y7n"]
+[ext_resource type="PackedScene" uid="uid://dl27xojitjda0" path="res://addons/ExtraUIControls/search_component.tscn" id="5_mw4ys"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rfxdj"]
 bg_color = Color(0.187176, 0.187176, 0.187176, 1)
 
-[sub_resource type="ButtonGroup" id="ButtonGroup_m3y7n"]
+[sub_resource type="ButtonGroup" id="ButtonGroup_km1hr"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ddoil"]
 bg_color = Color(0, 0, 0, 0.282)
@@ -50,7 +51,7 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-metadata/button_group = SubResource("ButtonGroup_m3y7n")
+metadata/button_group = SubResource("ButtonGroup_km1hr")
 
 [node name="add_theme_button" type="Button" parent="HSplitContainer/VBoxContainer/HBoxContainer"]
 unique_name_in_owner = true
@@ -75,6 +76,14 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_ddoil")
 icon = ExtResource("4_km1hr")
 icon_alignment = 1
 
+[node name="class_list_search" parent="HSplitContainer/VBoxContainer" instance=ExtResource("5_mw4ys")]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="HSplitContainer/VBoxContainer"]
+layout_mode = 2
+
 [node name="class_list_tree" type="Tree" parent="HSplitContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
@@ -94,7 +103,25 @@ text = "+"
 layout_mode = 2
 split_offset = 420
 
-[node name="details_tree" type="Tree" parent="HSplitContainer/VBoxContainer2"]
+[node name="vbox" type="VBoxContainer" parent="HSplitContainer/VBoxContainer2"]
+layout_mode = 2
+
+[node name="search" type="HBoxContainer" parent="HSplitContainer/VBoxContainer2/vbox"]
+layout_mode = 2
+
+[node name="prop_list_search" parent="HSplitContainer/VBoxContainer2/vbox/search" instance=ExtResource("5_mw4ys")]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+size_flags_horizontal = 2
+
+[node name="variable_list_search" parent="HSplitContainer/VBoxContainer2/vbox/search" instance=ExtResource("5_mw4ys")]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+size_flags_horizontal = 2
+
+[node name="details_tree" type="Tree" parent="HSplitContainer/VBoxContainer2/vbox"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3

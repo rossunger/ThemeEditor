@@ -1,6 +1,6 @@
 [gd_scene load_steps=8 format=3 uid="uid://coudk3me6xvwh"]
 
-[ext_resource type="Theme" uid="uid://buavg5qe2abif" path="res://demo_theme.theme" id="1_lhitn"]
+[ext_resource type="Theme" uid="uid://d4d31bsv2hg78" path="res://demo_theme3.theme" id="1_lhitn"]
 [ext_resource type="PackedScene" uid="uid://m5hovspa3nvn" path="res://addons/ExtraUIControls/input_otp.tscn" id="2_cfoqm"]
 [ext_resource type="Script" uid="uid://djkkus5eatw8k" path="res://demo_ui.gd" id="2_lhitn"]
 [ext_resource type="PackedScene" uid="uid://cgt657e4n0pk0" path="res://addons/ExtraUIControls/accordion.tscn" id="2_u81os"]
@@ -17,7 +17,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("1_lhitn")
-theme_type_variation = &"panel_main_PanelContainer"
+theme_type_variation = &"panel_primary_dark_PanelContainer"
 script = ExtResource("2_lhitn")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
@@ -37,28 +37,28 @@ theme_override_constants/margin_bottom = 5
 
 [node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/Panel2/MarginContainer"]
 layout_mode = 2
-theme_type_variation = &"_HBoxContainer"
+theme_type_variation = &"margin_medium_HBoxContainer"
 alignment = 1
 
 [node name="Button" type="Button" parent="VBoxContainer/Panel2/MarginContainer/HBoxContainer"]
 layout_mode = 2
-theme_type_variation = &"button_solid_Button"
+theme_type_variation = &"button_solid_primary_Button"
 text = "Home"
 
 [node name="Button2" type="Button" parent="VBoxContainer/Panel2/MarginContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 8
-theme_type_variation = &"button_solid_Button"
+theme_type_variation = &"button_solid_primary_Button"
 text = "About"
 
 [node name="Button3" type="Button" parent="VBoxContainer/Panel2/MarginContainer/HBoxContainer"]
 layout_mode = 2
-theme_type_variation = &"button_solid_Button"
+theme_type_variation = &"button_solid_primary_Button"
 text = "Pricing"
 
 [node name="Button4" type="Button" parent="VBoxContainer/Panel2/MarginContainer/HBoxContainer"]
 layout_mode = 2
-theme_type_variation = &"button_solid_Button"
+theme_type_variation = &"button_solid_primary_Button"
 text = "Contact"
 
 [node name="CenterContainer" type="CenterContainer" parent="VBoxContainer"]
@@ -68,11 +68,10 @@ layout_mode = 2
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
 size_flags_horizontal = 3
-theme_type_variation = &"box_m"
 
 [node name="Label" type="Label" parent="VBoxContainer/CenterContainer/VBoxContainer"]
 layout_mode = 2
-theme_type_variation = &"h1_Label"
+theme_type_variation = &"h1_primary_light_Label"
 text = "Welcome to the game"
 horizontal_alignment = 1
 uppercase = true
@@ -88,24 +87,24 @@ custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
 size_flags_horizontal = 6
 size_flags_vertical = 3
-theme_type_variation = &"container_full_rect_VBoxContainer"
+theme_type_variation = &"margin_medium_VBoxContainer"
 
 [node name="Button" type="Button" parent="VBoxContainer/CenterContainer/VBoxContainer/VBoxContainer"]
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
-theme_type_variation = &"button_outline_Button"
+theme_type_variation = &"button_outline_accent_Button"
 text = "Play"
 
 [node name="Button2" type="Button" parent="VBoxContainer/CenterContainer/VBoxContainer/VBoxContainer"]
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
-theme_type_variation = &"button_menu_Button"
+theme_type_variation = &"button_solid_warning_Button"
 text = "Options"
 
 [node name="Button3" type="Button" parent="VBoxContainer/CenterContainer/VBoxContainer/VBoxContainer"]
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
-theme_type_variation = &"button_outline_Button"
+theme_type_variation = &"button_solid_accent_Button"
 text = "Exit"
 
 [node name="MarginContainer2" type="MarginContainer" parent="VBoxContainer/CenterContainer/VBoxContainer"]
@@ -122,19 +121,31 @@ alignment = 1
 [node name="Button4" type="Button" parent="VBoxContainer/CenterContainer/VBoxContainer/HBoxContainer"]
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
-theme_type_variation = &"button_menu"
+theme_type_variation = &"button_solid_error_Button"
 text = "Play"
 
 [node name="Button5" type="Button" parent="VBoxContainer/CenterContainer/VBoxContainer/HBoxContainer"]
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
-theme_type_variation = &"button_menu"
+theme_type_variation = &"button_solid_primary_Button"
 text = "Options"
 
 [node name="Button6" type="Button" parent="VBoxContainer/CenterContainer/VBoxContainer/HBoxContainer"]
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
-theme_type_variation = &"button_menu"
+theme_type_variation = &"button_solid_secondary_Button"
+text = "Exit"
+
+[node name="Button7" type="Button" parent="VBoxContainer/CenterContainer/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+theme_type_variation = &"button_solid_with_outline_error_Button"
+text = "Exit"
+
+[node name="Button8" type="Button" parent="VBoxContainer/CenterContainer/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+theme_type_variation = &"button_solid_with_outline_accent_Button"
 text = "Exit"
 
 [node name="MarginContainer3" type="MarginContainer" parent="VBoxContainer/CenterContainer/VBoxContainer"]
@@ -175,7 +186,7 @@ size_flags_horizontal = 4
 size_flags_vertical = 4
 
 [node name="CalendarDatePicker" parent="Control" instance=ExtResource("3_cfoqm")]
-custom_minimum_size = Vector2(338, 271)
+custom_minimum_size = Vector2(338, 327)
 layout_mode = 2
 anchors_preset = 0
 anchor_right = 0.0
@@ -184,7 +195,7 @@ offset_left = -85.0
 offset_top = 1.0
 offset_right = 253.0
 offset_bottom = 272.0
-theme_type_variation = &"calendar_red"
+theme_type_variation = &"calendar"
 
 [node name="InputOtp" parent="Control" instance=ExtResource("2_cfoqm")]
 layout_mode = 1
@@ -202,3 +213,4 @@ offset_bottom = -86.0
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
+tweak_mode_only = false
